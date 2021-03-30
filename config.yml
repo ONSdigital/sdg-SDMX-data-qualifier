@@ -4,3 +4,9 @@ required_cols:
   - 'other_info'
   - 'data_non_statistical'
   - 'national_geographical_coverage'
+proxy_terms:
+  - proxy indicator
+  - proxy measure
+  - used as an approximation
+  - suitable proxy
+  - used as a proxy
