@@ -1,0 +1,6 @@
+meta_url: https://onsdigital.github.io/sdg-data/en/meta/all.json
+required_cols: 
+  - 'indicator_number'
+  - 'other_info'
+  - 'data_non_statistical'
+  - 'national_geographical_coverage'
