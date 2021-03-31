@@ -60,6 +60,10 @@ check_if_proxies_contain_official()
 # cleaning up the national_geo col
 df.national_geographical_coverage = df.national_geographical_coverage.str.replace("nan","None")
 
+# creating mapping for uk coverage
+uk_terms = config['uk_terms']
+df['only_uk_data'] = df.national_geographical_coverage.map(lambda x: x in uk_terms)
+
 # get output filename
 csv_nm = os.path.join(os.getcwd(),config['outfile'])
 # write out to csv
