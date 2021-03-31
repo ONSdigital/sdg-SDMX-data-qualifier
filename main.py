@@ -20,13 +20,18 @@ proxy_terms_list = config['proxy_terms']
 # other_info col has "None" in, which needs to be nan
 df.other_info.replace("None", np.nan, inplace=True)
 
-# Getting terms into str for regex with OR | operator
-str = ''
-for item in proxy_terms_list:
-    str += item
-    if item != proxy_terms_list[-1]:
-        str += "|"
-proxy_terms = str
+# Getting terms into str for regex with OR | 
+def regex_or_str(termslist):
+    "Joins items of a list with the regex OR operator"
+    regex_terms = ''
+    for item in termslist:
+        regex_terms += item
+        if item != termslist[-1]:
+            regex_terms += "|"
+    return regex_terms
+
+proxy_terms = regex_or_str(proxy_terms_list)
+
 # I am sure there's a better way to do this.
 # TODO: optimise proxy_terms_list creation
 # proxy_terms = ''.join(config['proxy_terms']).replace(" ", "|")
@@ -63,6 +68,26 @@ df.national_geographical_coverage = df.national_geographical_coverage.str.replac
 # creating mapping for uk coverage
 uk_terms = config['uk_terms']
 df['only_uk_data'] = df.national_geographical_coverage.map(lambda x: x in uk_terms)
+
+# Pulling disagg report
+disag_url = config['disag_url']
+disag_df = pd.read_csv(disag_url)
+
+# checking if Disaggregations col contains keywords geo_disag_terms
+geo_disag_terms_list = config['geo_disag_terms']
+# Join terms in list with regex or operator
+geo_disag_terms = regex_or_str(geo_disag_terms_list)
+# Creating boolean
+disag_boolean = disag_df.Disaggregations.str.contains(geo_disag_terms, regex=True)
+disag_df['geo_disag'] = disag_boolean
+# Alter the indicator names so they match the other df
+disag_df.Indicator = disag_df.Indicator.str[1:]
+# Drop the now uneeded Disaggregations cols
+disag_df.drop(['Disaggregations', 'Number of disaggregations'], axis=1, inplace=True)
+# Set index and merge on index
+disag_df.set_index("Indicator", inplace=True)
+# Left joining df onto disag_df
+df = df.join(disag_df)
 
 # get output filename
 csv_nm = os.path.join(os.getcwd(),config['outfile'])
