@@ -1,11 +1,10 @@
-# from numpy.core.defchararray import endswith
 import yaml
 import pandas as pd
 import numpy as np
+import os
 
 # Load config
 config = yaml.safe_load(open('config.yml'))
-
 
 # reading all the meta data in from url
 meta_url = config['meta_url']
@@ -58,4 +57,10 @@ def check_if_proxies_contain_official():
 # quality check
 check_if_proxies_contain_official()
 
+# cleaning up the national_geo col
+df.national_geographical_coverage = df.national_geographical_coverage.str.replace("nan","None")
 
+# get output filename
+csv_nm = os.path.join(os.getcwd(),config['outfile'])
+# write out to csv
+df.to_csv(csv_nm)

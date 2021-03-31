@@ -1,6 +1,6 @@
 meta_url: https://onsdigital.github.io/sdg-data/en/meta/all.json
 required_cols: 
-  #- 'indicator_number'
+  #- 'indicator_number' #don't need this as indicator numbers become index
   - 'other_info'
   - 'data_non_statistical'
   - 'national_geographical_coverage'
@@ -11,3 +11,7 @@ proxy_terms:
   - used as an approximation
   - suitable proxy
   - used as a proxy
+uk_terms:
+  - 'United Kingdom'
+  - 'UK'
+outfile: 'output.csv'
