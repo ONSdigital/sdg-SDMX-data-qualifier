@@ -1,11 +1,10 @@
 meta_url: https://onsdigital.github.io/sdg-data/en/meta/all.json
-disag_url: "https://sdgdata.gov.uk/sdg-data/disaggregation-by-indicator-report.csv"
+disag_url: https://sdgdata.gov.uk/sdg-data/disaggregation-by-indicator-report.csv
 required_cols: 
-  #- 'indicator_number' #don't need this as indicator numbers become index
-  - 'other_info'
-  - 'data_non_statistical'
-  - 'national_geographical_coverage'
-  - 'reporting_status'
+  - other_info
+  - data_non_statistical
+  - national_geographical_coverage
+  - reporting_status
 proxy_terms:
   - proxy indicator
   - proxy measure
@@ -13,10 +12,11 @@ proxy_terms:
   - suitable proxy
   - used as a proxy
 uk_terms:
-  - 'United Kingdom'
-  - 'UK'
+  - United Kingdom
+  - UK
+  - England, Scotland, Wales, Northern Ireland
 geo_disag_terms:
-  - 'Region'
-  - 'Country'
-  - 'Local Authority'
-outfile: 'output.csv'
+  - Region
+  - Country
+  - Local Authority
+outfile: output.csv
