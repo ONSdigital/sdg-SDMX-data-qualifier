@@ -93,7 +93,8 @@ df = df.join(disag_df)
 uk_terms = regex_or_str(uk_terms)
 df.national_geographical_coverage = df.national_geographical_coverage.str.replace(uk_terms, "United Kingdom", regex=True)
 
-print(df.head())
+# Including 8-1-1 by setting proxy to false
+df.loc['8-1-1', 'proxy_indicator'] = False
 
 # get output filename
 csv_nm = os.path.join(os.getcwd(),config['outfile'])
