@@ -1,4 +1,4 @@
-from numpy.core.defchararray import endswith
+# from numpy.core.defchararray import endswith
 import yaml
 import pandas as pd
 import numpy as np
@@ -53,6 +53,9 @@ def check_if_proxies_contain_official():
     contractions_list = proxies_df[official_mask].index.to_list()
     for index_num in contractions_list:
         print(f"""There seem to be contradictory statements in other_info in indicator {index_num}""")
+    return contractions_list
 
 # quality check
 check_if_proxies_contain_official()
+
+
