@@ -1,6 +1,7 @@
 import yaml
 import pandas as pd
 import numpy as np
+import os
 
 # Load config
 config = yaml.safe_load(open('config.yml'))
@@ -60,6 +61,6 @@ check_if_proxies_contain_official()
 df.national_geographical_coverage = df.national_geographical_coverage.str.replace("nan","None")
 
 # get output filename
-csv_nm = config['outfile']
+csv_nm = os.path.join(os.getcwd(),config['outfile'])
 # write out to csv
 df.to_csv(csv_nm)
