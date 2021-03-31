@@ -1,9 +1,10 @@
 meta_url: https://onsdigital.github.io/sdg-data/en/meta/all.json
 required_cols: 
-  - 'indicator_number'
+  #- 'indicator_number'
   - 'other_info'
   - 'data_non_statistical'
   - 'national_geographical_coverage'
+  - 'reporting_status'
 proxy_terms:
   - proxy indicator
   - proxy measure
