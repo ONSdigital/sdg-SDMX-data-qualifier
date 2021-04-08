@@ -20,3 +20,10 @@ geo_disag_terms:
   - Country
   - Local Authority
 outfile: output.csv
+suitability_test:
+  data_non_statistical: False
+  national_geographical_coverage: United Kingdom
+  reporting_status: Completed
+  proxy_indicator: False
+  only_uk_data: True
+  geo_disag: False
