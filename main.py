@@ -100,3 +100,18 @@ df.loc['8-1-1', 'proxy_indicator'] = False
 csv_nm = os.path.join(os.getcwd(),config['outfile'])
 # write out to csv
 df.to_csv(csv_nm)
+
+#Get SDMX suitability test
+suit = config['suitability_test']
+
+# Build logic test query string
+query_string=''
+for col_nm,col_val in suit.items():
+    if col_val not in [True, False]:
+        col_val = f"'{col_val}'"
+    query_string+=f"{col_nm}=={col_val}"
+    if col_nm!=list(suit.keys())[-1]:
+        query_string+=" & "
+
+# make the df of included indicators
+inc_df = df.query(query_string)
