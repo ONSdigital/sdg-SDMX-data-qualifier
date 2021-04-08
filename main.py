@@ -110,12 +110,8 @@ for col_nm,col_val in suit.items():
     if col_val not in [True, False]:
         col_val = f"'{col_val}'"
     query_string+=f"{col_nm}=={col_val}"
-    # (df['Salary_in_1000']>=100) &
     if col_nm!=list(suit.keys())[-1]:
         query_string+=" & "
 
 # make the df of included indicators
 inc_df = df.query(query_string)
-
-
-inc_df.to_csv("inc.csv")
