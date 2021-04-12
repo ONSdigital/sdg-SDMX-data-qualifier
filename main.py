@@ -7,7 +7,8 @@ import os
 config = yaml.safe_load(open('config.yml'))
 
 # reading all the meta data in from url
-meta_url = config['meta_url']
+#meta_url = config['meta_url']
+meta_url = "all.json"
 df = pd.read_json(meta_url, orient='index')
 
 # dropping uneeded cols
@@ -95,6 +96,9 @@ disag_df.drop(['Disaggregations', 'Number of disaggregations'], axis=1, inplace=
 disag_df.set_index("Indicator", inplace=True)
 # Left joining df onto disag_df
 df = df.join(disag_df)
+
+# Remove archived indictors
+df = df[~df.index.str.contains("archived")]
 
 # Making UK terms uniform --> United Kingdom
 uk_terms = regex_or_str(uk_terms)
