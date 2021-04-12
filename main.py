@@ -69,9 +69,17 @@ df.national_geographical_coverage = df.national_geographical_coverage.str.replac
 uk_terms = config['uk_terms']
 df['only_uk_data'] = df.national_geographical_coverage.map(lambda x: x in uk_terms)
 
-# Pulling disagg report
-disag_url = config['disag_url']
-disag_df = pd.read_csv(disag_url)
+def get_disag_report():
+    """Gets the disagregation report from the URL specified in the config file
+        then it changes the indicator names so they are the same as metadata df"""
+    # Pulling disagg report
+    disag_url = config['disag_url']
+    disag_df = pd.read_csv(disag_url)
+    # Alter the indicator names so they match the other df
+    disag_df.Indicator = disag_df.Indicator.str[1:]
+    return disag_df
+
+disag_df = get_disag_report()
 
 # checking if Disaggregations col contains keywords geo_disag_terms
 geo_disag_terms_list = config['geo_disag_terms']
@@ -80,8 +88,7 @@ geo_disag_terms = regex_or_str(geo_disag_terms_list)
 # Creating boolean
 disag_boolean = disag_df.Disaggregations.str.contains(geo_disag_terms, regex=True)
 disag_df['geo_disag'] = disag_boolean
-# Alter the indicator names so they match the other df
-disag_df.Indicator = disag_df.Indicator.str[1:]
+
 # Drop the now uneeded Disaggregations cols
 disag_df.drop(['Disaggregations', 'Number of disaggregations'], axis=1, inplace=True)
 # Set index and merge on index
@@ -115,3 +122,10 @@ for col_nm,col_val in suit.items():
 
 # make the df of included indicators
 inc_df = df.query(query_string)
+
+# Getting unique column headers in included datasets only
+disag_series = get_disag_report().loc[:,["Indicator", "Disaggregations"]].set_index("Indicator")
+filtered_disags = disag_series.join(inc_df, how="inner")
+split_disags = filtered_disags["Disaggregations"].str.split(", ")
+unique_disags = split_disags.explode().unique()
+print(unique_disags)
