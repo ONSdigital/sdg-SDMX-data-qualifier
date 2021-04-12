@@ -89,6 +89,9 @@ disag_df.set_index("Indicator", inplace=True)
 # Left joining df onto disag_df
 df = df.join(disag_df)
 
+# Remove archived indicators
+df = df[~df.index.str.contains("archived")]
+
 # Making UK terms uniform --> United Kingdom
 uk_terms = regex_or_str(uk_terms)
 df.national_geographical_coverage = df.national_geographical_coverage.str.replace(uk_terms, "United Kingdom", regex=True)
