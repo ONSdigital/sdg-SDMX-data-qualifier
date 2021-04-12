@@ -129,3 +129,13 @@ filtered_disags = disag_series.join(inc_df, how="inner")
 split_disags = filtered_disags["Disaggregations"].str.split(", ")
 unique_disags = split_disags.explode().unique()
 print(unique_disags)
+
+
+# ticket 17
+# Column names should be sdg_column_name, SDMX_concept_name (empty column)
+df_build_dict ={
+    "sdg_column_name" : unique_disags,
+    "SDMX_concept_name" : np.empty_like(unique_disags)
+    }
+# write out the csv
+pd.DataFrame(data=df_build_dict).to_csv("SDG_column_names.csv")
