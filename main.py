@@ -69,6 +69,9 @@ df.national_geographical_coverage = df.national_geographical_coverage.str.replac
 uk_terms = config['uk_terms']
 df['only_uk_data'] = df.national_geographical_coverage.map(lambda x: x in uk_terms)
 
+# Remove archived indicators
+df = df[~df.index.str.contains("archived")]
+
 def get_disag_report():
     """Gets the disagregation report from the URL specified in the config file
         then it changes the indicator names so they are the same as metadata df"""
@@ -103,6 +106,9 @@ df.national_geographical_coverage = df.national_geographical_coverage.str.replac
 # Including 8-1-1 by setting proxy to false
 df.loc['8-1-1', 'proxy_indicator'] = False
 
+# sorting the index of the main df
+df = df.sort_index()
+
 # get output filename
 csv_nm = os.path.join(os.getcwd(),config['outfile'])
 # write out to csv
@@ -119,6 +125,8 @@ for col_nm,col_val in suit.items():
     query_string+=f"{col_nm}=={col_val}"
     if col_nm!=list(suit.keys())[-1]:
         query_string+=" & "
+
+
 
 # make the df of included indicators
 inc_df = df.query(query_string)
