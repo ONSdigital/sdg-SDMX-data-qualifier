@@ -25,9 +25,14 @@ def regex_or_str(termslist):
     "Joins items of a list with the regex OR operator"
     regex_terms = ''
     for item in termslist:
+        if item == termslist[0]:
+            regex_terms += "\\b"
         regex_terms += item
         if item != termslist[-1]:
-            regex_terms += "|"
+            regex_terms += "\\b|\\b"
+        else:
+            regex_terms += "\\b"
+    # raw_regex_terms = r"{}".format(regex_terms)
     return regex_terms
 
 proxy_terms = regex_or_str(proxy_terms_list)
@@ -85,7 +90,9 @@ geo_disag_terms_list = config['geo_disag_terms']
 # Join terms in list with regex or operator
 geo_disag_terms = regex_or_str(geo_disag_terms_list)
 # Creating boolean
+print("Searching for ", geo_disag_terms)
 disag_boolean = disag_df.Disaggregations.str.contains(geo_disag_terms, regex=True)
+print(disag_boolean.value_counts())
 disag_df['geo_disag'] = disag_boolean   
 
 # Drop the now uneeded Disaggregations cols
@@ -95,10 +102,10 @@ disag_df.set_index("Indicator", inplace=True)
 # Left joining df onto disag_df
 df = df.join(disag_df)
 
-# creating mapping for uk coverage
-uk_terms = config['uk_terms']
+# creating local variable to map for uk coverage
+uk_terms_list = config['uk_terms'] 
 
-def check_only_uk_data(nat_geo_series, geo_disag_series):
+def check_only_uk_data(nat_geo_series, geo_disag_series, uk_terms):
     """Checks if Both of these conditions need to met
         1) value in the national_geographical_coverage is listed in uk_terms 
         2) value in geo_disag column is FALSE
@@ -109,17 +116,22 @@ def check_only_uk_data(nat_geo_series, geo_disag_series):
         geo_disag_series (pd.Series): The geo_disag series
     Returns:
         Boolean : True if conditions are met, False otherwise.
-    """    
+    """
     if nat_geo_series in uk_terms and geo_disag_series is False:
         return True
     return False
 
 # Applying the check_only_uk_data to map True/False to new 'only_uk_data' series
-df['only_uk_data'] = df.apply(lambda x: check_only_uk_data(x.national_geographical_coverage, x.geo_disag), axis=1)
+df['only_uk_data'] = (df.apply(lambda x:
+                        check_only_uk_data(x.national_geographical_coverage,
+                        x.geo_disag,
+                        uk_terms_list),
+                        axis=1))
 
 # Making UK terms uniform --> United Kingdom
-uk_terms = regex_or_str(uk_terms)
-df.national_geographical_coverage = df.national_geographical_coverage.str.replace(uk_terms, "United Kingdom", regex=True)
+uk_terms_reg = regex_or_str(uk_terms_list)
+print("Searching for ", uk_terms_reg)
+df.national_geographical_coverage = df.national_geographical_coverage.str.replace(uk_terms_reg, "United Kingdom", regex=True)
 
 # Including 8-1-1 by setting proxy to false
 df.loc['8-1-1', 'proxy_indicator'] = False
@@ -144,9 +156,8 @@ for col_nm,col_val in suit.items():
     if col_nm!=list(suit.keys())[-1]:
         query_string+=" & "
 
-
-
 # make the df of included indicators
+print("Querying df for ", query_string)
 inc_df = df.query(query_string)
 
 # Getting unique column headers in included datasets only
@@ -154,4 +165,4 @@ disag_series = get_disag_report().loc[:,["Indicator", "Disaggregations"]].set_in
 filtered_disags = disag_series.join(inc_df, how="inner")
 split_disags = filtered_disags["Disaggregations"].str.split(", ")
 unique_disags = split_disags.explode().unique()
-print(unique_disags)
+print("These are the unique disaggregations", unique_disags)
