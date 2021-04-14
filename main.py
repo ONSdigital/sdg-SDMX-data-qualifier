@@ -50,7 +50,7 @@ def check_if_proxies_contain_official():
         contradiction."""
     official = "Data follows the UN specification for this indicator"
     # Isolate those records that contain the proxy keywords
-    proxies_df =df[df.proxy_indicator==True] 
+    proxies_df = df[df.proxy_indicator==True] 
     # Make a boolean mask
     official_mask = proxies_df[proxies_df.proxy_indicator].other_info.str.contains(official)
     # Apply mask to proxies_df
@@ -64,10 +64,6 @@ check_if_proxies_contain_official()
 
 # cleaning up the national_geo col
 df.national_geographical_coverage = df.national_geographical_coverage.str.replace("nan","None")
-
-# creating mapping for uk coverage
-uk_terms = config['uk_terms']
-df['only_uk_data'] = df.national_geographical_coverage.map(lambda x: x in uk_terms)
 
 # Remove archived indicators
 df = df[~df.index.str.contains("archived")]
@@ -90,7 +86,7 @@ geo_disag_terms_list = config['geo_disag_terms']
 geo_disag_terms = regex_or_str(geo_disag_terms_list)
 # Creating boolean
 disag_boolean = disag_df.Disaggregations.str.contains(geo_disag_terms, regex=True)
-disag_df['geo_disag'] = disag_boolean
+disag_df['geo_disag'] = disag_boolean   
 
 # Drop the now uneeded Disaggregations cols
 disag_df.drop(['Disaggregations', 'Number of disaggregations'], axis=1, inplace=True)
@@ -98,6 +94,28 @@ disag_df.drop(['Disaggregations', 'Number of disaggregations'], axis=1, inplace=
 disag_df.set_index("Indicator", inplace=True)
 # Left joining df onto disag_df
 df = df.join(disag_df)
+
+# creating mapping for uk coverage
+uk_terms = config['uk_terms']
+
+def check_only_uk_data(nat_geo_series, geo_disag_series):
+    """Checks if Both of these conditions need to met
+        1) value in the national_geographical_coverage is listed in uk_terms 
+        2) value in geo_disag column is FALSE
+        and returns True if conditions are met, False otherwise. 
+        Function to be used to map/apply to create new series 
+    Args:
+        nat_geo_series (pd.Series): The national_geographical_coverage series
+        geo_disag_series (pd.Series): The geo_disag series
+    Returns:
+        Boolean : True if conditions are met, False otherwise.
+    """    
+    if nat_geo_series in uk_terms and geo_disag_series is False:
+        return True
+    return False
+
+# Applying the check_only_uk_data to map True/False to new 'only_uk_data' series
+df['only_uk_data'] = df.apply(lambda x: check_only_uk_data(x.national_geographical_coverage, x.geo_disag), axis=1)
 
 # Making UK terms uniform --> United Kingdom
 uk_terms = regex_or_str(uk_terms)
