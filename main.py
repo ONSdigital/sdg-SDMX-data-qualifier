@@ -35,12 +35,12 @@ def regex_or_str(termslist):
     regex_terms = ''
     for item in termslist:
         if item == termslist[0]:
-            regex_terms += ",\\b"
+            regex_terms += "\\b"
         regex_terms += item
         if item != termslist[-1]:
-            regex_terms += ",\\b|\\b"
+            regex_terms += "\\b|\\b"
         else:
-            regex_terms += ",\\b"
+            regex_terms += "\\b"
     # raw_regex_terms = r"{}".format(regex_terms)
     return re.compile(regex_terms)
 
@@ -105,12 +105,17 @@ disag_boolean = disag_df.Disaggregations.str.contains(geo_disag_terms, regex=Tru
 print(disag_boolean.value_counts())
 disag_df['geo_disag'] = disag_boolean   
 
+csv_nm = os.path.join(os.getcwd(),config['disag_df.csv'])
+
 # Drop the now uneeded Disaggregations cols
 disag_df.drop(['Disaggregations', 'Number of disaggregations'], axis=1, inplace=True)
 # Set index and merge on index
 disag_df.set_index("Indicator", inplace=True)
 # Left joining df onto disag_df
 df = df.join(disag_df)
+
+# Replacing nans with False in the geo_disag series 
+df.geo_disag.replace(np.nan,False, inplace=True)
 
 # creating local variable to map for uk coverage
 uk_terms_list = config['uk_terms'] 
@@ -149,6 +154,9 @@ df.loc['8-1-1', 'proxy_indicator'] = False
 # sorting the index of the main df
 df = df.sort_index()
 
+print("========================Printing df")
+print(df.head(20))
+
 # get output filename
 csv_nm = os.path.join(os.getcwd(),config['outfile'])
 # write out to csv
@@ -173,6 +181,7 @@ print(f"The shape of inc_df is {inc_df.shape}")
 
 # Getting unique column headers in included datasets only
 disag_series = get_disag_report().loc[:,["Indicator", "Disaggregations"]].set_index("Indicator")
+# Filtering 
 filtered_disags_df = disag_series.join(inc_df, how="inner")
 print(f"The shape of filtered_disags_df is {filtered_disags_df.shape}")
 split_disags = filtered_disags_df["Disaggregations"].str.split(", ")
