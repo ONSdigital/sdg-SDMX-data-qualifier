@@ -2,6 +2,7 @@ import yaml
 import pandas as pd
 import numpy as np
 import os
+import re
 
 # Load config
 config = yaml.safe_load(open('config.yml'))
@@ -22,18 +23,26 @@ df.other_info.replace("None", np.nan, inplace=True)
 
 # Getting terms into str for regex with OR | 
 def regex_or_str(termslist):
-    "Joins items of a list with the regex OR operator"
+    """Joins items of a list with the regex OR operator
+
+    Args:
+        termslist (list): list of terms (strings) that should be joined
+            with the | operator. 
+
+    Returns:
+        re.Pattern: the regex pattern in unicode
+    """    
     regex_terms = ''
     for item in termslist:
         if item == termslist[0]:
-            regex_terms += "\\b"
+            regex_terms += ",\\b"
         regex_terms += item
         if item != termslist[-1]:
-            regex_terms += "\\b|\\b"
+            regex_terms += ",\\b|\\b"
         else:
-            regex_terms += "\\b"
+            regex_terms += ",\\b"
     # raw_regex_terms = r"{}".format(regex_terms)
-    return regex_terms
+    return re.compile(regex_terms)
 
 proxy_terms = regex_or_str(proxy_terms_list)
 
@@ -83,6 +92,7 @@ def get_disag_report():
     disag_df.Indicator = disag_df.Indicator.str[1:]
     return disag_df
 
+# Get the disagregation report
 disag_df = get_disag_report()
 
 # checking if Disaggregations col contains keywords geo_disag_terms
@@ -130,7 +140,7 @@ df['only_uk_data'] = (df.apply(lambda x:
 
 # Making UK terms uniform --> United Kingdom
 uk_terms_reg = regex_or_str(uk_terms_list)
-print("Searching for ", uk_terms_reg)
+print("Searching for regex string", uk_terms_reg)
 df.national_geographical_coverage = df.national_geographical_coverage.str.replace(uk_terms_reg, "United Kingdom", regex=True)
 
 # Including 8-1-1 by setting proxy to false
@@ -159,10 +169,14 @@ for col_nm,col_val in suit.items():
 # make the df of included indicators
 print("Querying df for ", query_string)
 inc_df = df.query(query_string)
+print(f"The shape of inc_df is {inc_df.shape}")
 
 # Getting unique column headers in included datasets only
 disag_series = get_disag_report().loc[:,["Indicator", "Disaggregations"]].set_index("Indicator")
-filtered_disags = disag_series.join(inc_df, how="inner")
-split_disags = filtered_disags["Disaggregations"].str.split(", ")
+filtered_disags_df = disag_series.join(inc_df, how="inner")
+print(f"The shape of filtered_disags_df is {filtered_disags_df.shape}")
+split_disags = filtered_disags_df["Disaggregations"].str.split(", ")
 unique_disags = split_disags.explode().unique()
-print("These are the unique disaggregations", unique_disags)
+print(f"""These are the unique disaggregations, {unique_disags}
+Length of disags = {len(unique_disags)})
+""")
