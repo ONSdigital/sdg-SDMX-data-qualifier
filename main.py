@@ -105,7 +105,7 @@ disag_boolean = disag_df.Disaggregations.str.contains(geo_disag_terms, regex=Tru
 print(disag_boolean.value_counts())
 disag_df['geo_disag'] = disag_boolean   
 
-csv_nm = os.path.join(os.getcwd(),config['disag_df.csv'])
+csv_nm = os.path.join(os.getcwd(),'disag_df.csv')
 
 # Drop the now uneeded Disaggregations cols
 disag_df.drop(['Disaggregations', 'Number of disaggregations'], axis=1, inplace=True)
@@ -177,6 +177,12 @@ for col_nm,col_val in suit.items():
 # make the df of included indicators
 print("Querying df for ", query_string)
 inc_df = df.query(query_string)
+
+# Manually dropping '13-2-2', '17-5-1', '17-6-1' from df because
+# they have been changed into the 2020 indicators, so we do not want to 
+# consider them for SDMX at this point
+inc_df = inc_df.drop(['13-2-2', '17-5-1', '17-6-1'], axis=0)
+
 print(f"The shape of inc_df is {inc_df.shape}")
 
 # Getting unique column headers in included datasets only
