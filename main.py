@@ -193,5 +193,8 @@ print(f"The shape of filtered_disags_df is {filtered_disags_df.shape}")
 split_disags = filtered_disags_df["Disaggregations"].str.split(", ")
 unique_disags = split_disags.explode().unique()
 print(f"""These are the unique disaggregations, {unique_disags}
-Length of disags = {len(unique_disags)})
-""")
+Length of disags = {len(unique_disags)})""")
+(pd.DataFrame({"sdg_column_name":unique_disags,
+                "SDMX_concept_name": np.empty_like(unique_disags)})
+                .to_csv("SDG_SDMX_colnames.csv"))
+
