@@ -2,6 +2,7 @@ import yaml
 import pandas as pd
 import numpy as np
 import os
+import re
 
 # Load config
 config = yaml.safe_load(open('config.yml'))
@@ -22,13 +23,26 @@ df.other_info.replace("None", np.nan, inplace=True)
 
 # Getting terms into str for regex with OR | 
 def regex_or_str(termslist):
-    "Joins items of a list with the regex OR operator"
+    """Joins items of a list with the regex OR operator
+
+    Args:
+        termslist (list): list of terms (strings) that should be joined
+            with the | operator. 
+
+    Returns:
+        re.Pattern: the regex pattern in unicode
+    """    
     regex_terms = ''
     for item in termslist:
+        if item == termslist[0]:
+            regex_terms += "\\b"
         regex_terms += item
         if item != termslist[-1]:
-            regex_terms += "|"
-    return regex_terms
+            regex_terms += "\\b|\\b"
+        else:
+            regex_terms += "\\b"
+    # raw_regex_terms = r"{}".format(regex_terms)
+    return re.compile(regex_terms)
 
 proxy_terms = regex_or_str(proxy_terms_list)
 
@@ -50,7 +64,7 @@ def check_if_proxies_contain_official():
         contradiction."""
     official = "Data follows the UN specification for this indicator"
     # Isolate those records that contain the proxy keywords
-    proxies_df =df[df.proxy_indicator==True] 
+    proxies_df = df[df.proxy_indicator==True] 
     # Make a boolean mask
     official_mask = proxies_df[proxies_df.proxy_indicator].other_info.str.contains(official)
     # Apply mask to proxies_df
@@ -65,23 +79,34 @@ check_if_proxies_contain_official()
 # cleaning up the national_geo col
 df.national_geographical_coverage = df.national_geographical_coverage.str.replace("nan","None")
 
-# creating mapping for uk coverage
-uk_terms = config['uk_terms']
-df['only_uk_data'] = df.national_geographical_coverage.map(lambda x: x in uk_terms)
+# Remove archived indicators
+df = df[~df.index.str.contains("archived")]
 
-# Pulling disagg report
-disag_url = config['disag_url']
-disag_df = pd.read_csv(disag_url)
+def get_disag_report():
+    """Gets the disagregation report from the URL specified in the config file
+        then it changes the indicator names so they are the same as metadata df"""
+    # Pulling disagg report
+    disag_url = config['disag_url']
+    disag_df = pd.read_csv(disag_url)
+    # Alter the indicator names so they match the other df
+    disag_df.Indicator = disag_df.Indicator.str[1:]
+    return disag_df
+
+# Get the disagregation report
+disag_df = get_disag_report()
 
 # checking if Disaggregations col contains keywords geo_disag_terms
 geo_disag_terms_list = config['geo_disag_terms']
 # Join terms in list with regex or operator
 geo_disag_terms = regex_or_str(geo_disag_terms_list)
 # Creating boolean
+print("Searching for ", geo_disag_terms)
 disag_boolean = disag_df.Disaggregations.str.contains(geo_disag_terms, regex=True)
-disag_df['geo_disag'] = disag_boolean
-# Alter the indicator names so they match the other df
-disag_df.Indicator = disag_df.Indicator.str[1:]
+print(disag_boolean.value_counts())
+disag_df['geo_disag'] = disag_boolean   
+
+csv_nm = os.path.join(os.getcwd(),'disag_df.csv')
+
 # Drop the now uneeded Disaggregations cols
 disag_df.drop(['Disaggregations', 'Number of disaggregations'], axis=1, inplace=True)
 # Set index and merge on index
@@ -89,12 +114,48 @@ disag_df.set_index("Indicator", inplace=True)
 # Left joining df onto disag_df
 df = df.join(disag_df)
 
+# Replacing nans with False in the geo_disag series 
+df.geo_disag.replace(np.nan,False, inplace=True)
+
+# creating local variable to map for uk coverage
+uk_terms_list = config['uk_terms'] 
+
+def check_only_uk_data(nat_geo_series, geo_disag_series, uk_terms):
+    """Checks if Both of these conditions need to met
+        1) value in the national_geographical_coverage is listed in uk_terms 
+        2) value in geo_disag column is FALSE
+        and returns True if conditions are met, False otherwise. 
+        Function to be used to map/apply to create new series 
+    Args:
+        nat_geo_series (pd.Series): The national_geographical_coverage series
+        geo_disag_series (pd.Series): The geo_disag series
+    Returns:
+        Boolean : True if conditions are met, False otherwise.
+    """
+    if nat_geo_series in uk_terms and geo_disag_series is False:
+        return True
+    return False
+
+# Applying the check_only_uk_data to map True/False to new 'only_uk_data' series
+df['only_uk_data'] = (df.apply(lambda x:
+                        check_only_uk_data(x.national_geographical_coverage,
+                        x.geo_disag,
+                        uk_terms_list),
+                        axis=1))
+
 # Making UK terms uniform --> United Kingdom
-uk_terms = regex_or_str(uk_terms)
-df.national_geographical_coverage = df.national_geographical_coverage.str.replace(uk_terms, "United Kingdom", regex=True)
+uk_terms_reg = regex_or_str(uk_terms_list)
+print("Searching for regex string", uk_terms_reg)
+df.national_geographical_coverage = df.national_geographical_coverage.str.replace(uk_terms_reg, "United Kingdom", regex=True)
 
 # Including 8-1-1 by setting proxy to false
 df.loc['8-1-1', 'proxy_indicator'] = False
+
+# sorting the index of the main df
+df = df.sort_index()
+
+print("========================Printing df")
+print(df.head(20))
 
 # get output filename
 csv_nm = os.path.join(os.getcwd(),config['outfile'])
@@ -114,4 +175,26 @@ for col_nm,col_val in suit.items():
         query_string+=" & "
 
 # make the df of included indicators
+print("Querying df for ", query_string)
 inc_df = df.query(query_string)
+
+# Manually dropping '13-2-2', '17-5-1', '17-6-1' from df because
+# they have been changed into the 2020 indicators, so we do not want to 
+# consider them for SDMX at this point
+inc_df = inc_df.drop(['13-2-2', '17-5-1', '17-6-1'], axis=0)
+
+print(f"The shape of inc_df is {inc_df.shape}")
+
+# Getting unique column headers in included datasets only
+disag_series = get_disag_report().loc[:,["Indicator", "Disaggregations"]].set_index("Indicator")
+# Filtering 
+filtered_disags_df = disag_series.join(inc_df, how="inner")
+print(f"The shape of filtered_disags_df is {filtered_disags_df.shape}")
+split_disags = filtered_disags_df["Disaggregations"].str.split(", ")
+unique_disags = split_disags.explode().unique()
+print(f"""These are the unique disaggregations, {unique_disags}
+Length of disags = {len(unique_disags)})""")
+(pd.DataFrame({"sdg_column_name":unique_disags,
+                "SDMX_concept_name": np.empty_like(unique_disags)})
+                .to_csv("SDG_SDMX_colnames.csv"))
+
