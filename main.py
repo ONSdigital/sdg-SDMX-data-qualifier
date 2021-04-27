@@ -226,3 +226,30 @@ def manual_excel(excel_file, wanted_cols):
 # Make a df of the cols         
 mapped_columns_df = manual_excel(EXCEL_FILE, WANTED_COLS)
 print(mapped_columns_df)
+
+# Ticket 20  - Get all disagregation values and match them with their
+# respective column titles. Output as a df and csv  
+URL_prefix = f"https://sdgdata.gov.uk/sdg-data/values--disaggregation--"
+URL_suffix = ".csv"
+col_name_slugs = mapped_columns_df.sdg_column_name.str.lower().str.replace(" ","-")
+mapped_columns_df["disag_val_urls"] = URL_prefix + col_name_slugs + URL_suffix
+# Empty lists to capture the column names and values
+col_names = []
+col_values = []
+# Grab the column names and their respective URL values csv resource
+col_series = mapped_columns_df.sdg_column_name
+val_series = mapped_columns_df.disag_val_urls
+for col_name,url in zip(col_series, val_series):
+    values = pd.read_csv(url, usecols=["Value"]).to_numpy()
+    for value in values:
+        col_names.append(col_name)
+        col_values.append(*value)
+emptycells = np.empty_like(col_names)
+construct_dict = {"column_value":col_values,
+                  "column_name":col_names,
+                  "SDMX_code": emptycells,
+                  "comments":emptycells}
+
+# Creating the dataframe of vals and column match
+val_col_pairs_df = pd.DataFrame(construct_dict)
+val_col_pairs_df.to_csv("val_col_pairs.csv")
