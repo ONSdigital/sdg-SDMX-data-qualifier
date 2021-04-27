@@ -213,7 +213,7 @@ def manual_excel(excel_file, wanted_cols):
         df = pd.read_excel(excel_file, 
                             usecols=wanted_cols,
                             engine="openpyxl")
-        df.dropna(axis=0, subset=["SDMX_concept_name"])
+        df.dropna(axis=0, subset=["SDMX_concept_name"], inplace=True)
         return df    
     except Exception as ex:
         print(f"""There has been an error with the import of the 
@@ -225,3 +225,4 @@ def manual_excel(excel_file, wanted_cols):
 
 # Make a df of the cols         
 mapped_columns_df = manual_excel(EXCEL_FILE, WANTED_COLS)
+print(mapped_columns_df)
