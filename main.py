@@ -192,9 +192,11 @@ filtered_disags_df = disag_series.join(inc_df, how="inner")
 print(f"The shape of filtered_disags_df is {filtered_disags_df.shape}")
 split_disags = filtered_disags_df["Disaggregations"].str.split(", ")
 unique_disags = split_disags.explode().unique()
-print(f"""These are the unique disaggregations, {unique_disags}
-Length of disags = {len(unique_disags)})""")
-(pd.DataFrame({"sdg_column_name":unique_disags,
-                "SDMX_concept_name": np.empty_like(unique_disags)})
-                .to_csv("SDG_SDMX_colnames.csv"))
 
+# Column names should be sdg_column_name, SDMX_concept_name (empty column)
+df_build_dict ={
+    "sdg_column_name" : unique_disags,
+    "SDMX_concept_name" : np.empty_like(unique_disags)
+    }
+# write out the csv
+pd.DataFrame(data=df_build_dict).to_csv("SDG_column_names.csv")
