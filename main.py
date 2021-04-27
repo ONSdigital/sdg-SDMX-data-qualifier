@@ -200,3 +200,29 @@ df_build_dict ={
     }
 # write out the csv
 pd.DataFrame(data=df_build_dict).to_csv("SDG_column_names.csv")
+
+#Ticket #19
+# The excel file should have been manually updated with mappings
+# from SDG column names to their SDMX concept name mapping
+# Import the manually updated file
+EXCEL_FILE = config["manual_excel_file_name"]
+WANTED_COLS = ["sdg_column_name", "SDMX_concept_name"]
+
+def manual_excel(excel_file, wanted_cols):
+    try:
+        df = pd.read_excel(excel_file, 
+                            usecols=wanted_cols,
+                            engine="openpyxl")
+        df.dropna(axis=0, subset=["SDMX_concept_name"], inplace=True)
+        return df    
+    except Exception as ex:
+        print(f"""There has been an error with the import of the 
+                    manually updated Excel file \n Check that the 
+                    dependecies (openpyxl) are installed and that 
+                    the file is named correctly in config
+                    \n\n 
+                    Error Message: {ex}""")
+
+# Make a df of the cols         
+mapped_columns_df = manual_excel(EXCEL_FILE, WANTED_COLS)
+print(mapped_columns_df)
