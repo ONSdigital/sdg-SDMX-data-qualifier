@@ -27,3 +27,4 @@ suitability_test:
   proxy_indicator: false
   only_uk_data: true
   geo_disag: false
+manual_excel_file_name: sdg_sdmx_colnames-manual.xlsx
