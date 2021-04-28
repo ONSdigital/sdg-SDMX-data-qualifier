@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import os
 import re
+from functools import cache
 
 # Load config
 config = yaml.safe_load(open('config.yml'))
@@ -35,7 +36,7 @@ proxy_terms_list = config['proxy_terms']
 meta_data_df.other_info.replace("None", np.nan, inplace=True)
 
 # Getting terms into str for regex with OR | 
-def regex_or_str(termslist):
+def regex_or_str(termslist:list):
     """Joins items of a list with the regex OR operator
 
     Args:
@@ -178,18 +179,33 @@ csv_nm = os.path.join(os.getcwd(),config['meta_outfile'])
 meta_data_df.to_csv(csv_nm)
 
 #Get SDMX suitability test
-suit = config['suitability_test']
+suitability_dict = config['suitability_test']
 
 # Build logic test query string
-query_string=''
-for col_nm,col_val in suit.items():
-    if col_val not in [True, False]:
-        col_val = f"'{col_val}'"
-    query_string+=f"{col_nm}=={col_val}"
-    if col_nm!=list(suit.keys())[-1]:
-        query_string+=" & "
+def build_query(query_words: dict) -> str:
+    """
+    Builds an SQL style query string from a dictionary
+        where keys are column titles and values are values
+        that the query will test for. 
+        
+    Args:
+        query_words (dict): a dictionary where keys are column 
+            titles and values are values
+
+    Returns:
+        str: an string that can be used as an SQL query
+    """    
+    query_string=''
+    for col_nm,col_val in query_words.items():
+        if col_val not in [True, False]:
+            col_val = f"'{col_val}'"
+        query_string+=f"{col_nm}=={col_val}"
+        if col_nm!=list(query_words.keys())[-1]:
+            query_string+=" & "
+    return query_string
 
 # make the df of included indicators
+query_string = build_query(suitability_dict)
 print("Querying meta_data_df for ", query_string)
 inc_df = meta_data_df.query(query_string)
 
@@ -201,7 +217,7 @@ inc_df = inc_df.drop(config["2020indicators"], axis=0)
 print(f"The shape of inc_df is {inc_df.shape}")
 
 # Getting unique column headers in included datasets only
-disag_series = get_disag_report().loc[:,["Indicator", "Disaggregations"]].set_index("Indicator")
+disag_series = get_disag_report(DISAG_URL).loc[:,["Indicator", "Disaggregations"]].set_index("Indicator")
 # Filtering 
 filtered_disags_df = disag_series.join(inc_df, how="inner")
 print(f"The shape of filtered_disags_df is {filtered_disags_df.shape}")
@@ -268,3 +284,33 @@ construct_dict = {"column_value":col_values,
 # Creating the dataframe of vals and column match
 val_col_pairs_df = pd.DataFrame(construct_dict)
 val_col_pairs_df.to_csv("val_col_pairs.csv")
+
+# Ticket 21 Swap SDG_column_names col for SDMX_column_name in sdg_col_names_vals_df
+@cache
+def get_SDMX_colnm(search_value):
+    val_df = mapped_columns_df[mapped_columns_df.sdg_column_name == search_value]
+    row = val_df.index[0]
+    val = val_df.loc[:].at[row,"SDMX_concept_name"]
+    return val
+
+# creating a new column in val_col_pairs df called sdmx_col_nm
+val_col_pairs_df["sdmx_col_nm"] = (val_col_pairs_df
+                                    .column_name
+                                    .apply(lambda x: get_SDMX_colnm(x)))
+
+# Dropping the old SDG column names
+val_col_pairs_df.drop(columns=["column_name"], inplace=True)
+# Renaming the SDMX col names as "column_name"
+val_col_pairs_df.rename(columns={"sdmx_col_nm":"column_name",
+                        "SDMX_code":"sdmx_code"},
+                        inplace=True)
+# Reordering columns
+order_cols = ['column_value', 'column_name', 'sdmx_code', 'comments']
+val_col_pairs_df = val_col_pairs_df[order_cols]
+
+print(val_col_pairs_df.head())
+
+# Outputting result to csv
+val_col_pairs_df.to_csv("SDMX_colnames_values_matched.csv")
+
+
