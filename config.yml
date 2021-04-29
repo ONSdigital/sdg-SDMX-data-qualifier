@@ -1,4 +1,4 @@
-meta_url: https://onsdigital.github.io/sdg-data/en/meta/all.json
+meta_url: https://sdgdata.gov.uk/sdg-data/en/meta/all.json
 disag_url: https://sdgdata.gov.uk/sdg-data/disaggregation-by-indicator-report.csv
 required_cols: 
   - other_info
@@ -37,3 +37,7 @@ manual_excel_file_name: sdg_sdmx_colnames-manual.xlsx
   - 13-2-2
   - 17-5-1
   - 17-6-1
+sort_order:
+  - goal
+  - target
+  - indicator

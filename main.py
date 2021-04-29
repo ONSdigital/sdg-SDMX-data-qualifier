@@ -179,7 +179,6 @@ def df_sorter(df: pd.DataFrame, sort_order: list) -> pd.DataFrame:
         Target: numeric then alphabetic
             then by
         Target: numeric
-
     Args:
         df (pd.DataFrame): A pandas dataframe to be sorted, which has
             indicators as its index
