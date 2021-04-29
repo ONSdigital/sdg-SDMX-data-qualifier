@@ -1,4 +1,4 @@
-meta_url: https://onsdigital.github.io/sdg-data/en/meta/all.json
+meta_url: https://sdgdata.gov.uk/sdg-data/en/meta/all.json
 disag_url: https://sdgdata.gov.uk/sdg-data/disaggregation-by-indicator-report.csv
 required_cols: 
   - other_info
