@@ -238,15 +238,16 @@ col_names = []
 col_values = []
 # Grab the column names and their respective URL values csv resource
 col_series = mapped_columns_df.sdg_column_name
-val_series = mapped_columns_df.disag_val_urls
-for col_name,url in zip(col_series, val_series):
+value_urls = mapped_columns_df.disag_val_urls
+for col_name,url in zip(col_series, value_urls):
+    # Get all the value disaggregations for each column 
     values = pd.read_csv(url, usecols=["Value"]).to_numpy()
     for value in values:
         col_names.append(col_name)
         col_values.append(*value)
 emptycells = np.empty_like(col_names)
 construct_dict = {"column_value":col_values,
-                  "column_name":col_names,
+                  "sdg_column_name":col_names,
                   "SDMX_code": emptycells,
                   "comments":emptycells}
 
