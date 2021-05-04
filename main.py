@@ -245,6 +245,7 @@ def manual_excel(excel_file, wanted_cols):
                             usecols=wanted_cols,
                             engine="openpyxl")
         df.dropna(axis=0, subset=["SDMX_concept_name"], inplace=True)
+        print("The manual-input Excel file has been imported.")
         return df    
     except Exception as ex:
         print(f"""There has been an error with the import of the 
@@ -256,7 +257,7 @@ def manual_excel(excel_file, wanted_cols):
 
 # Make a df of the cols         
 mapped_columns_df = manual_excel(EXCEL_FILE, WANTED_COLS)
-print(mapped_columns_df)
+
 
 # Ticket 20  - Get all disagregation values and match them with their
 # respective column titles. Output as a df and csv  
@@ -277,7 +278,7 @@ for col_name,url in zip(col_series, val_series):
         col_values.append(*value)
 emptycells = np.empty_like(col_names)
 construct_dict = {"column_value":col_values,
-                  "column_name":col_names,
+                  "sdg_column_name":col_names,
                   "SDMX_code": emptycells,
                   "comments":emptycells}
 
@@ -286,20 +287,33 @@ val_col_pairs_df = pd.DataFrame(construct_dict)
 val_col_pairs_df.to_csv("val_col_pairs.csv")
 
 # Ticket 21 Swap SDG_column_names col for SDMX_column_name in sdg_col_names_vals_df
-@cache
+@cache # Caching provides a 20x speed-up here
 def get_SDMX_colnm(search_value):
+    """Gets the SDMX equivilent of all of the SDG column names, by looking up the 
+        SDG column name. To be used on a the sdg_column_name column of the dataframe 
+        containing the SDG column names. It looks up the values sdg_column_name column 
+        and returns their equivilent from SDMX_concept_name column of `mapped_columns_df`
+        which came from the manual-input Excel file.      
+        
+    Args:
+        search_value (str): strings from the sdg_column_name column 
+
+    Returns:
+        str: SDMX concept name equivilent 
+    """
     val_df = mapped_columns_df[mapped_columns_df.sdg_column_name == search_value]
     row = val_df.index[0]
     val = val_df.loc[:].at[row,"SDMX_concept_name"]
     return val
 
-# creating a new column in val_col_pairs df called sdmx_col_nm
+# Creating a new column in val_col_pairs df called sdmx_col_nm
+# which contains the SDMX equivilent of all of the SDG column names
 val_col_pairs_df["sdmx_col_nm"] = (val_col_pairs_df
-                                    .column_name
+                                    .sdg_column_name
                                     .apply(lambda x: get_SDMX_colnm(x)))
 
 # Dropping the old SDG column names
-val_col_pairs_df.drop(columns=["column_name"], inplace=True)
+val_col_pairs_df.drop(columns=["sdg_column_name"], inplace=True)
 # Renaming the SDMX col names as "column_name"
 val_col_pairs_df.rename(columns={"sdmx_col_nm":"column_name",
                         "SDMX_code":"sdmx_code"},
@@ -308,9 +322,12 @@ val_col_pairs_df.rename(columns={"sdmx_col_nm":"column_name",
 order_cols = ['column_value', 'column_name', 'sdmx_code', 'comments']
 val_col_pairs_df = val_col_pairs_df[order_cols]
 
-print(val_col_pairs_df.head())
+# De-duping column_value and column_name because there will be some duplicates
+before_shape = val_col_pairs_df.shape
+val_col_pairs_df.drop_duplicates(subset=["column_name", "column_value"], inplace=True)
+print(f"Shape before de-dupe = {before_shape}. \n\n Shape after de-dupe {val_col_pairs_df.shape}")
 
 # Outputting result to csv
-val_col_pairs_df.to_csv("SDMX_colnames_values_matched.csv")
+val_col_pairs_df.to_csv("SDMX_colnames_values_matched-#21.csv")
 
 
