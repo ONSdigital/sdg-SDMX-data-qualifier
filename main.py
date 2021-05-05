@@ -258,7 +258,6 @@ def manual_excel(excel_file, wanted_cols):
 # Make a df of the cols         
 mapped_columns_df = manual_excel(EXCEL_FILE, WANTED_COLS)
 
-
 # Ticket 20  - Get all disagregation values and match them with their
 # respective column titles. Output as a df and csv  
 URL_prefix = f"https://sdgdata.gov.uk/sdg-data/values--disaggregation--"
@@ -270,8 +269,9 @@ col_names = []
 col_values = []
 # Grab the column names and their respective URL values csv resource
 col_series = mapped_columns_df.sdg_column_name
-val_series = mapped_columns_df.disag_val_urls
-for col_name,url in zip(col_series, val_series):
+value_urls = mapped_columns_df.disag_val_urls
+for col_name,url in zip(col_series, value_urls):
+    # Get all the value disaggregations for each column 
     values = pd.read_csv(url, usecols=["Value"]).to_numpy()
     for value in values:
         col_names.append(col_name)
@@ -284,7 +284,10 @@ construct_dict = {"column_value":col_values,
 
 # Creating the dataframe of vals and column match
 val_col_pairs_df = pd.DataFrame(construct_dict)
-val_col_pairs_df.to_csv("val_col_pairs.csv")
+
+# Output for #20
+val_col_pairs_df.to_csv("val_col_pairs-#20.csv")
+
 
 # Ticket 21 Swap SDG_column_names col for SDMX_column_name in sdg_col_names_vals_df
 @cache # Caching provides a 20x speed-up here
