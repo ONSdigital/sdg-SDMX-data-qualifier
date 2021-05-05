@@ -167,9 +167,38 @@ meta_data_df.national_geographical_coverage = meta_data_df.national_geographical
 # Including 8-1-1 by setting proxy to false
 meta_data_df.loc['8-1-1', 'proxy_indicator'] = False
 
-# sorting the index of the meta data df
-meta_data_df = meta_data_df.sort_index()
+# ticket #29    
+def df_sorter(df: pd.DataFrame, sort_order: list) -> pd.DataFrame:
+    """Sorts a dataframe which has indicators as strigns, such as
+        '1-2-1', then it sorts them according to the hierache in the
+        config file. 
+        Goal: numeric
+            then by
+        Target: numeric then alphabetic
+            then by
+        Target: numeric
 
+    Args:
+        df (pd.DataFrame): A pandas dataframe to be sorted, which has
+            indicators as its index
+        sort_order (list): the order in which the indicators should be
+            sort
+
+    Returns:
+        pd.DataFrame: a pandas dataframe sorted as required.
+    """    
+    df.reset_index(inplace=True)
+    df.rename(columns={"index":"g-t-i"}, inplace=True)
+    # goal_targ_ind = df["g-t-i"].str.split("-", expand=True)
+    df[sort_order] = meta_data_df['g-t-i'].str.split("-", expand=True)
+    df.sort_values(sort_order, axis=0, inplace=True)
+    df.drop([*sort_order,"g-t-i"], axis=1)
+    df.set_index("g-t-i", inplace=True)
+    return df
+    
+sort_order = config["sort_order"]
+meta_data_df =df_sorter(meta_data_df, sort_order)
+ 
 print("========================Printing df")
 print(meta_data_df.head(20))
 
