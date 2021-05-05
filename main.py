@@ -325,7 +325,9 @@ val_col_pairs_df = val_col_pairs_df[order_cols]
 # De-duping column_value and column_name because there will be some duplicates
 before_shape = val_col_pairs_df.shape
 val_col_pairs_df.drop_duplicates(subset=["column_name", "column_value"], inplace=True)
-print(f"Shape before de-dupe = {before_shape}. \n\n Shape after de-dupe {val_col_pairs_df.shape}")
+after_shape = val_col_pairs_df.shape
+print(f"""De-depuping finished.
+{before_shape[0] - after_shape[0]} records were dropped.""")
 
 # Outputting result to csv
 val_col_pairs_df.to_csv("SDMX_colnames_values_matched-#21.csv")
