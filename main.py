@@ -4,7 +4,7 @@ import numpy as np
 import os
 import re
 from functools import cache
-import fuzzywuzzy as fw
+from fuzzywuzzy import process, fuzz
 
 # Load config
 config = yaml.safe_load(open('config.yml'))
@@ -321,6 +321,7 @@ val_col_pairs_df.to_csv("val_col_pairs-#20.csv")
 # Ticket 21 Swap SDG_column_names col for SDMX_column_name in sdg_col_names_vals_df
 @cache # Caching provides a 20x speed-up here
 def get_SDMX_colnm(search_value):
+    #TODO: merge this with the pd_vlookup function
     """Gets the SDMX equivilent of all of the SDG column names, by looking up the 
         SDG column name. To be used on a the sdg_column_name column of the dataframe 
         containing the SDG column names. It looks up the values sdg_column_name column 
@@ -336,6 +337,12 @@ def get_SDMX_colnm(search_value):
     val_df = mapped_columns_df[mapped_columns_df.sdg_column_name == search_value]
     row = val_df.index[0]
     val = val_df.loc[:].at[row,"SDMX_concept_name"]
+    return val
+
+def pd_vlookup(search_value, search_df, search_series_nm, return_series_nm):
+    val_df = search_df[search_series_nm == search_value]
+    row = val_df.index[0]
+    val = val_df.loc[:].at[row,return_series_nm]
     return val
 
 # Creating a new column in val_col_pairs df called sdmx_col_nm
@@ -358,12 +365,72 @@ val_col_pairs_df = val_col_pairs_df[order_cols]
 before_shape = val_col_pairs_df.shape
 val_col_pairs_df.drop_duplicates(subset=["column_name", "column_value"], inplace=True)
 after_shape = val_col_pairs_df.shape
-print(f"""De-depuping finished.\n
-{before_shape[0] - after_shape[0]} records were dropped.""")
+print(f"""De-depuping finished.{before_shape[0] - after_shape[0]} records were dropped.""")
 
 # Outputting result to csv
 val_col_pairs_df.to_csv("SDMX_colnames_values_matched-#21.csv")
 
 # Import DSD
-dsd_url = config['dsd_url']
-dsd_df = pd.read_excel(dsd_url)
+dsd_xls = pd.ExcelFile(config['dsd_url'])
+col_name = "Age"
+
+concept_sch = pd.read_excel(dsd_xls, engine="openpyxl", sheet_name="3.Concept Scheme", skiprows=11, header=0, usecols=[2,7])
+
+def get_dsd_tab_name(concept_sch, concept_name):
+    res = concept_sch[concept_sch['Concept Name:en'] == concept_name]
+    if res.shape[0]>0:
+        row_num = res.index[0]
+        return res.at[row_num,"Code List or Uncoded"]
+    else:
+        print(f"Skipping {concept_name}, as this is not found in the concept scheme")
+        return None
+    
+
+# For each value in val_col_pairs_df.column_value, want to check
+# if there is a good match in dsd for that column
+# e.g. if the value is '16 to 64' and the column name is age
+# the function will open the worksheet in the DSD_matrix xls called CL_AGE
+# and check the "Name:en" column for a good match. 
+
+# for col_name in val_col_pairs_df.loc[:,'column_name'].unique():
+#     vals = val_col_pairs_df[val_col_pairs_df['column_name']==col_name].column_value.to_list()
+#     for val_name in vals:
+#         if val_name in dsd_codelist:
+#             print(val_name)
+#             val_col_pairs_df[val_col_pairs_df.column_value == val_name].loc[:,'sdmx_code'] = val_name
+#         else:
+#             val_col_pairs_df[val_col_pairs_df.column_value == val_name].loc[:,'sdmx_code'] = process.extract(val_name, dsd_codelist, limit=1)[0][0]
+#             val_col_pairs_df[val_col_pairs_df.column_value == val_name].loc[:,'comments'] = "-----Suggested-------"
+
+dsd_code_list_dict = {}
+for col_name in val_col_pairs_df.loc[:,'column_name'].unique():
+    tab_name = get_dsd_tab_name(concept_sch, col_name)
+    if not tab_name:
+        continue
+    dsd_codelist = pd.read_excel(dsd_xls, 
+                    engine="openpyxl",
+                    sheet_name=f"{tab_name.upper()}",
+                    skiprows=12,
+                    header=0,
+                    usecols=[4]).iloc[:,0].to_list()
+    dsd_code_list_dict[col_name] = dsd_codelist
+
+           
+def find_suggested_dsd_value(column_name, sdg_column_value, dsd_code_list_dict):
+    dsd_code_list = dsd_code_list_dict[column_name]
+    sub_string_matches = [x for x in dsd_code_list if sdg_column_value in x]
+    if sub_string_matches:
+        return sub_string_matches[0]
+    possible_match = process.extractOne(sdg_column_value, 
+                                        dsd_code_list, 
+                                        scorer=fuzz.partial_token_sort_ratio)
+    if possible_match[1]>=90:
+        return possible_match[0]  
+    else:
+        return None
+
+val_col_pairs_df["sdmx_code"] = val_col_pairs_df.apply(lambda x: find_suggested_dsd_value(x.column_name, x.column_value, dsd_code_list_dict), axis=1)
+
+print(val_col_pairs_df.sample(20))
+
+val_col_pairs_df.to_csv("testing_matching.csv")
