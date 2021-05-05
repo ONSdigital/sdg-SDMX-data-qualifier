@@ -317,7 +317,6 @@ val_col_pairs_df = pd.DataFrame(construct_dict)
 # Output for #20
 val_col_pairs_df.to_csv("val_col_pairs-#20.csv")
 
-
 # Ticket 21 Swap SDG_column_names col for SDMX_column_name in sdg_col_names_vals_df
 @cache # Caching provides a 20x speed-up here
 def get_SDMX_colnm(search_value):
@@ -351,7 +350,7 @@ val_col_pairs_df.rename(columns={"sdmx_col_nm":"column_name",
                         "SDMX_code":"sdmx_code"},
                         inplace=True)
 # Reordering columns
-order_cols = ['column_value', 'column_name', 'sdmx_code', 'comments']
+order_cols = ['column_name', 'column_value', 'sdmx_code', 'comments']
 val_col_pairs_df = val_col_pairs_df[order_cols]
 
 # De-duping column_value and column_name because there will be some duplicates
@@ -364,4 +363,6 @@ print(f"""De-depuping finished.\n
 # Outputting result to csv
 val_col_pairs_df.to_csv("SDMX_colnames_values_matched-#21.csv")
 
+# Import DSD
 
+config['dsd_url']
