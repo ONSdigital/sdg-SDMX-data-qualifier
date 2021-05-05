@@ -4,7 +4,7 @@ import numpy as np
 import os
 import re
 from functools import cache
-import fuzzywuzzy
+import fuzzywuzzy as fw
 
 # Load config
 config = yaml.safe_load(open('config.yml'))
@@ -359,11 +359,11 @@ before_shape = val_col_pairs_df.shape
 val_col_pairs_df.drop_duplicates(subset=["column_name", "column_value"], inplace=True)
 after_shape = val_col_pairs_df.shape
 print(f"""De-depuping finished.\n
-{before_shape[0] - {after_shape}[0]} records were dropped.""")
+{before_shape[0] - after_shape[0]} records were dropped.""")
 
 # Outputting result to csv
 val_col_pairs_df.to_csv("SDMX_colnames_values_matched-#21.csv")
 
 # Import DSD
-
-config['dsd_url']
+dsd_url = config['dsd_url']
+dsd_df = pd.read_excel(dsd_url)
