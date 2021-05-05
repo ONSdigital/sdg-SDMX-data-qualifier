@@ -4,6 +4,7 @@ import numpy as np
 import os
 import re
 from functools import cache
+import fuzzywuzzy
 
 # Load config
 config = yaml.safe_load(open('config.yml'))

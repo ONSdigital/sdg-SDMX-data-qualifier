@@ -1,5 +1,6 @@
 meta_url: https://sdgdata.gov.uk/sdg-data/en/meta/all.json
 disag_url: https://sdgdata.gov.uk/sdg-data/disaggregation-by-indicator-report.csv
+dsd_url: https://unstats.un.org/sdgs/files/SDG_DSD_MATRIX.1.4.xlsm
 required_cols: 
   - other_info
   - data_non_statistical
