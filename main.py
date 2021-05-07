@@ -462,10 +462,10 @@ def find_suggested_dsd_value(column_name, sdg_column_value, dsd_code_list_dict):
         prompt = input_prompt.format(sdg_column_value, last_option_index)
         choose_match = valid_int_input(prompt, highest_input=last_option_index)
         if choose_match !=count_matches+1:
-            return possible_matches[choose_match], "Matching SDG value was manually chosen"
+            return possible_matches[choose_match][0], "Matching SDG value was manually chosen"
         else:
-            return None, "No matches were manually chosen for {sdg_column_value}"
-    return None, f"Automatic. No matches were found for {sdg_column_value}"
+            return "None", "No matches were manually chosen for {sdg_column_value}"
+    return "None", f"Automatic. No matches were found for {sdg_column_value}"
 
 # Create new `pandas` methods which use `tqdm` progress
 tqdm.pandas(desc="Progress so far")
