@@ -5,6 +5,7 @@ import os
 import re
 from functools import cache
 from fuzzywuzzy import process, fuzz
+from tqdm import tqdm
 
 # Load config
 config = yaml.safe_load(open('config.yml'))
@@ -415,21 +416,61 @@ for col_name in val_col_pairs_df.loc[:,'column_name'].unique():
                     usecols=[4]).iloc[:,0].to_list()
     dsd_code_list_dict[col_name] = dsd_codelist
 
-           
-def find_suggested_dsd_value(column_name, sdg_column_value, dsd_code_list_dict):
-    dsd_code_list = dsd_code_list_dict[column_name]
-    sub_string_matches = [x for x in dsd_code_list if sdg_column_value in x]
-    if sub_string_matches:
-        return sub_string_matches[0]
-    possible_match = process.extractOne(sdg_column_value, 
-                                        dsd_code_list, 
-                                        scorer=fuzz.partial_token_sort_ratio)
-    if possible_match[1]>=90:
-        return possible_match[0]  
-    else:
-        return None
+def valid_int_input(prompt, highest_input):
+    while True:
+        try:
+            inp = int(input(prompt))
+            if inp>highest_input:
+                print("\n That value is too high. Try again")
+                continue
+            return inp
+        except ValueError as e:
+            print("Not a proper integer! Try it again")
 
-val_col_pairs_df["sdmx_code"] = val_col_pairs_df.apply(lambda x: find_suggested_dsd_value(x.column_name, x.column_value, dsd_code_list_dict), axis=1)
+input_prompt = """\n The SDG value to be matched is 
+    '{}'
+Choose a number from above options to select best matching SDMX value. 
+Or press {} if there is no suitable match:  """
+
+    
+def find_suggested_dsd_value(column_name, sdg_column_value, dsd_code_list_dict):
+    """[summary]
+
+    Args:
+        column_name ([type]): [description]
+        sdg_column_value ([type]): [description]
+        dsd_code_list_dict ([type]): [description]
+
+    Returns:
+        [type]: [description]
+    """
+    # Gets the correct codelist for the column name  
+    dsd_code_list = dsd_code_list_dict[column_name]
+    # Checks for sub-string matches 
+    sub_string_matches = [dsdcode for dsdcode in dsd_code_list if sdg_column_value in dsdcode]
+    if any(sub_string_matches):
+        return sub_string_matches[0], "Automatically matched based on sub-string match"
+    possible_matches = process.extract(sdg_column_value, 
+                                        dsd_code_list, 
+                                        scorer=fuzz.partial_token_sort_ratio, limit=8)
+    if any(possible_matches):
+        count_matches = len(possible_matches)
+        last_option_index = count_matches+1
+        for i, match in enumerate(possible_matches):
+            print(f"{i+1}: {match[0]} : {match[1]}%")
+        print(f"{count_matches+1}: None")
+        prompt = input_prompt.format(sdg_column_value, last_option_index)
+        choose_match = valid_int_input(prompt, highest_input=last_option_index)
+        if choose_match !=count_matches+1:
+            return possible_matches[choose_match], "Matching SDG value was manually chosen"
+        else:
+            return None, "No matches were manually chosen for {sdg_column_value}"
+    return None, f"Automatic. No matches were found for {sdg_column_value}"
+
+# Create new `pandas` methods which use `tqdm` progress
+tqdm.pandas(desc="Progress so far")
+
+val_col_pairs_df["sdmx_code"], val_col_pairs_df["comments"] = val_col_pairs_df.progress_apply(lambda df: find_suggested_dsd_value(df.column_name, df.column_value, dsd_code_list_dict), axis=1)
 
 print(val_col_pairs_df.sample(20))
 
