@@ -26,6 +26,7 @@ geo_disag_terms:
 meta_outfile: meta_data.csv
 disag_outfile: disag.csv
 sdg_cols_outfile : SDG_column_names.csv
+manual_excel_file_name: sdg_sdmx_colnames-manual.xlsx
 suitability_test:
   data_non_statistical: false
   national_geographical_coverage: "United Kingdom"
@@ -33,7 +34,6 @@ suitability_test:
   proxy_indicator: false
   only_uk_data: true
   geo_disag: false
-manual_excel_file_name: sdg_sdmx_colnames-manual.xlsx
 2020indicators:
   - 13-2-2
   - 17-5-1

@@ -6,6 +6,7 @@ import re
 from functools import cache
 from fuzzywuzzy import process, fuzz
 from tqdm import tqdm
+from time import perf_counter
 
 # Load config
 config = yaml.safe_load(open('config.yml'))
@@ -467,11 +468,62 @@ def find_suggested_dsd_value(column_name, sdg_column_value, dsd_code_list_dict):
             return "None", "No matches were manually chosen for {sdg_column_value}"
     return "None", f"Automatic. No matches were found for {sdg_column_value}"
 
-# Create new `pandas` methods which use `tqdm` progress
-tqdm.pandas(desc="Progress so far")
+def find_suggested_dsd_value_2(column_name: str, sdg_column_value: str, dsd_code_list_dict: dict):
+    """This is the iterrows solution
 
-val_col_pairs_df["sdmx_code"], val_col_pairs_df["comments"] = val_col_pairs_df.progress_apply(lambda df: find_suggested_dsd_value(df.column_name, df.column_value, dsd_code_list_dict), axis=1)
+    Args:
+        column_name ([type]): [description]
+        sdg_column_value ([type]): [description]
+        dsd_code_list_dict (dict): [description]
+
+    Returns:
+        [type]: [description]
+    """
+    # Gets the correct codelist for the column name  
+    dsd_code_list = dsd_code_list_dict[column_name]
+    # Checks for sub-string matches 
+    sub_string_matches = [dsdcode for dsdcode in dsd_code_list if sdg_column_value in dsdcode]
+    if any(sub_string_matches):
+        return sub_string_matches[0], "Automatically matched based on sub-string match"
+    possible_matches = process.extract(sdg_column_value, 
+                                        dsd_code_list, 
+                                        scorer=fuzz.partial_token_sort_ratio, limit=8)
+    if any(possible_matches):
+        count_matches = len(possible_matches)
+        last_option_index = count_matches+1
+        for i, match in enumerate(possible_matches):
+            print(f"{i+1}: {match[0]} : {match[1]}%")
+        print(f"{count_matches+1}: None")
+        prompt = input_prompt.format(sdg_column_value, last_option_index)
+        choose_match = valid_int_input(prompt, highest_input=last_option_index)
+        if choose_match !=count_matches+1:
+            return possible_matches[choose_match][0], "Matching SDG value was manually chosen"
+        elif choose_match ==count_matches+1:
+            return "None", "No matches were manually chosen for {sdg_column_value}"
+        else:
+            print("There has been some exceptional error")
+    return "None", f"Automatic. No matches were found for {sdg_column_value}"
+
+
+# Create new `pandas` methods which use `tqdm` progress
+# tqdm.pandas(desc="Progress so far")
+
+code_comments_dict = {"index_code":[],"sdmx_code":[],"comments":[]}
+
+for row in tqdm(val_col_pairs_df.iterrows()):
+    index_number = row[0] #check type
+    sdmx_code, comments = find_suggested_dsd_value_2(row[1].column_name, row[1].column_value, dsd_code_list_dict)
+    code_comments_dict["index_code"].append(index_number)
+    code_comments_dict["sdmx_code"].append(f"'{sdmx_code}'")
+    code_comments_dict["comments"].append(comments)
+
+match_values_df = pd.DataFrame.from_dict(code_comments_dict).set_index("index_code")
+match_values_df.rename(columns={"index_code":"index"}, inplace=True)
+
+val_col_pairs_df.drop(['sdmx_code', 'comments'], axis=1, inplace=True)
+val_col_pairs_df = val_col_pairs_df.join(match_values_df)
 
 print(val_col_pairs_df.sample(20))
 
-val_col_pairs_df.to_csv("testing_matching.csv")
+val_col_pairs_df.to_excel("testing_matching.xlsx")
+val_col_pairs_df.to_csv("testing_matching.csv", quotechar="'")
