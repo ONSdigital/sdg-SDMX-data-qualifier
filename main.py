@@ -6,7 +6,7 @@ import re
 from functools import cache
 from fuzzywuzzy import process, fuzz
 from tqdm import tqdm
-from time import perf_counter
+from time import sleep
 
 # Load config
 config = yaml.safe_load(open('config.yml'))
@@ -434,41 +434,48 @@ Choose a number from above options to select best matching SDMX value.
 Or press {} if there is no suitable match:  """
 
     
-def find_suggested_dsd_value(column_name, sdg_column_value, dsd_code_list_dict):
-    """[summary]
+# def find_suggested_dsd_value(column_name, sdg_column_value, dsd_code_list_dict):
+#     """[summary]
 
-    Args:
-        column_name ([type]): [description]
-        sdg_column_value ([type]): [description]
-        dsd_code_list_dict ([type]): [description]
+#     Args:
+#         column_name ([type]): [description]
+#         sdg_column_value ([type]): [description]
+#         dsd_code_list_dict ([type]): [description]
 
-    Returns:
-        [type]: [description]
-    """
+#     Returns:
+#         [type]: [description]
+#     """
+#     # Gets the correct codelist for the column name  
+#     dsd_code_list = dsd_code_list_dict[column_name]
+#     # Checks for sub-string matches 
+#     sub_string_matches = [dsdcode for dsdcode in dsd_code_list if sdg_column_value in dsdcode]
+#     if any(sub_string_matches):
+#         return sub_string_matches[0], "Automatically matched based on sub-string match"
+#     possible_matches = process.extract(sdg_column_value, 
+#                                         dsd_code_list, 
+#                                         scorer=fuzz.partial_token_sort_ratio, limit=8)
+#     if any(possible_matches):
+#         count_matches = len(possible_matches)
+#         last_option_index = count_matches+1
+#         for i, match in enumerate(possible_matches):
+#             print(f"{i+1}: {match[0]} : {match[1]}%")
+#         print(f"{count_matches+1}: None")
+#         prompt = input_prompt.format(sdg_column_value, last_option_index)
+#         choose_match = valid_int_input(prompt, highest_input=last_option_index)
+#         if choose_match !=count_matches+1:
+#             return possible_matches[choose_match][0], "Matching SDG value was manually chosen"
+#         else:
+#             return "None", "No matches were manually chosen for {sdg_column_value}"
+#     return "None", f"Automatic. No matches were found for {sdg_column_value}"
+
+def get_substring_matches(column_name, sdg_column_value):
     # Gets the correct codelist for the column name  
     dsd_code_list = dsd_code_list_dict[column_name]
     # Checks for sub-string matches 
-    sub_string_matches = [dsdcode for dsdcode in dsd_code_list if sdg_column_value in dsdcode]
-    if any(sub_string_matches):
-        return sub_string_matches[0], "Automatically matched based on sub-string match"
-    possible_matches = process.extract(sdg_column_value, 
-                                        dsd_code_list, 
-                                        scorer=fuzz.partial_token_sort_ratio, limit=8)
-    if any(possible_matches):
-        count_matches = len(possible_matches)
-        last_option_index = count_matches+1
-        for i, match in enumerate(possible_matches):
-            print(f"{i+1}: {match[0]} : {match[1]}%")
-        print(f"{count_matches+1}: None")
-        prompt = input_prompt.format(sdg_column_value, last_option_index)
-        choose_match = valid_int_input(prompt, highest_input=last_option_index)
-        if choose_match !=count_matches+1:
-            return possible_matches[choose_match][0], "Matching SDG value was manually chosen"
-        else:
-            return "None", "No matches were manually chosen for {sdg_column_value}"
-    return "None", f"Automatic. No matches were found for {sdg_column_value}"
+    sub_string_matches = get_substring_matches()
+    [dsdcode for dsdcode in dsd_code_list if sdg_column_value in dsdcode]
 
-def find_suggested_dsd_value_2(column_name: str, sdg_column_value: str, dsd_code_list_dict: dict):
+def suggest_dsd_value(column_name: str, sdg_column_value: str, dsd_code_list_dict: dict):
     """This is the iterrows solution
 
     Args:
@@ -479,27 +486,26 @@ def find_suggested_dsd_value_2(column_name: str, sdg_column_value: str, dsd_code
     Returns:
         [type]: [description]
     """
-    # Gets the correct codelist for the column name  
-    dsd_code_list = dsd_code_list_dict[column_name]
-    # Checks for sub-string matches 
-    sub_string_matches = [dsdcode for dsdcode in dsd_code_list if sdg_column_value in dsdcode]
+
     if any(sub_string_matches):
+        print(f"Automatically matched for {sdg_column_value}")
         return sub_string_matches[0], "Automatically matched based on sub-string match"
     possible_matches = process.extract(sdg_column_value, 
                                         dsd_code_list, 
                                         scorer=fuzz.partial_token_sort_ratio, limit=8)
     if any(possible_matches):
         count_matches = len(possible_matches)
+        # get the index/position of the last option in the list, for None
         last_option_index = count_matches+1
         for i, match in enumerate(possible_matches):
             print(f"{i+1}: {match[0]} : {match[1]}%")
         print(f"{count_matches+1}: None")
         prompt = input_prompt.format(sdg_column_value, last_option_index)
-        choose_match = valid_int_input(prompt, highest_input=last_option_index)
-        if choose_match !=count_matches+1:
+        choose_match = valid_int_input(prompt, highest_input=last_option_index)-1
+        if choose_match < count_matches:
             return possible_matches[choose_match][0], "Matching SDG value was manually chosen"
-        elif choose_match ==count_matches+1:
-            return "None", "No matches were manually chosen for {sdg_column_value}"
+        elif choose_match == count_matches: # This should catch option 9
+            return "None", f"No matches were manually chosen for {sdg_column_value}"
         else:
             print("There has been some exceptional error")
     return "None", f"Automatic. No matches were found for {sdg_column_value}"
@@ -510,12 +516,17 @@ def find_suggested_dsd_value_2(column_name: str, sdg_column_value: str, dsd_code
 
 code_comments_dict = {"index_code":[],"sdmx_code":[],"comments":[]}
 
-for row in tqdm(val_col_pairs_df.iterrows()):
-    index_number = row[0] #check type
-    sdmx_code, comments = find_suggested_dsd_value_2(row[1].column_name, row[1].column_value, dsd_code_list_dict)
+all_records = val_col_pairs_df.shape[0]
+for i, row in enumerate(val_col_pairs_df.iterrows()):
+    print(f"Progress: {i/all_records:.2f}%")
+    index_number = row[0] 
+    sdmx_code, comments = suggest_dsd_value(row[1].column_name, row[1].column_value, dsd_code_list_dict)
+    print(f"\nChosen value: {sdmx_code}\n")
+    sleep(1.25)
     code_comments_dict["index_code"].append(index_number)
     code_comments_dict["sdmx_code"].append(f"'{sdmx_code}'")
     code_comments_dict["comments"].append(comments)
+    
 
 match_values_df = pd.DataFrame.from_dict(code_comments_dict).set_index("index_code")
 match_values_df.rename(columns={"index_code":"index"}, inplace=True)
