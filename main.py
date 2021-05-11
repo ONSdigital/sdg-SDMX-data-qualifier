@@ -424,9 +424,12 @@ def valid_int_input(prompt, highest_input):
             inp = int(input(prompt))
             if inp>highest_input:
                 print("\n That value is too high. Try again")
+                sleep(0.5)
                 continue
             elif inp<1:
                 print("\n That value is too low. Try again")
+                sleep(0.5)
+                continue
             return inp
         except ValueError as e:
             print("Not a proper integer! Try it again")
@@ -498,8 +501,8 @@ def suggest_dsd_value(column_name: str, sdg_column_value: str, dsd_code_list_dic
             print(f"{i+1}: {match[0]} : {match[1]}%")
         print(f"{count_matches+1}: None")
         prompt = input_prompt.format(sdg_column_value, last_option_index)
-        # choose_match = valid_int_input(prompt, highest_input=last_option_index)-1
-        choose_match = randrange(-2, 11)
+        choose_match = valid_int_input(prompt, highest_input=last_option_index)-1
+        # choose_match = randrange(-2, 11)
         if choose_match < count_matches:
             return possible_matches[choose_match][0], "Matching SDG value was manually chosen"
         elif choose_match == count_matches: # This should catch option 9
@@ -520,7 +523,7 @@ for i, row in enumerate(val_col_pairs_df.iterrows()):
     index_number = row[0] 
     sdmx_code, comments = suggest_dsd_value(row[1].column_name, row[1].column_value, dsd_code_list_dict)
     print(f"\nChosen value: {sdmx_code}\n")
-    sleep(0.1)
+    sleep(1)
     code_comments_dict["index_code"].append(index_number)
     code_comments_dict["sdmx_code"].append(f"'{sdmx_code}'")
     code_comments_dict["comments"].append(comments)
@@ -534,5 +537,5 @@ val_col_pairs_df = val_col_pairs_df.join(match_values_df)
 
 print(val_col_pairs_df.sample(20))
 
-val_col_pairs_df.to_excel("testing_matching.xlsx")
+val_col_pairs_df.to_excel("manually_chosen_values.xlsx")
 val_col_pairs_df.to_csv("testing_matching.csv", quotechar="'")
