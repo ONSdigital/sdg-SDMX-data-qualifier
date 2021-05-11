@@ -7,6 +7,7 @@ from functools import cache
 from fuzzywuzzy import process, fuzz
 from tqdm import tqdm
 from time import sleep
+from random import randrange
 
 # Load config
 config = yaml.safe_load(open('config.yml'))
@@ -424,6 +425,8 @@ def valid_int_input(prompt, highest_input):
             if inp>highest_input:
                 print("\n That value is too high. Try again")
                 continue
+            elif inp<1:
+                print("\n That value is too low. Try again")
             return inp
         except ValueError as e:
             print("Not a proper integer! Try it again")
@@ -468,12 +471,8 @@ Or press {} if there is no suitable match:  """
 #             return "None", "No matches were manually chosen for {sdg_column_value}"
 #     return "None", f"Automatic. No matches were found for {sdg_column_value}"
 
-def get_substring_matches(column_name, sdg_column_value):
-    # Gets the correct codelist for the column name  
-    dsd_code_list = dsd_code_list_dict[column_name]
-    # Checks for sub-string matches 
-    sub_string_matches = get_substring_matches()
-    [dsdcode for dsdcode in dsd_code_list if sdg_column_value in dsdcode]
+def get_code_list(column_name, dsd_code_list_dict=dsd_code_list_dict):
+    return dsd_code_list_dict[column_name]
 
 def suggest_dsd_value(column_name: str, sdg_column_value: str, dsd_code_list_dict: dict):
     """This is the iterrows solution
@@ -487,9 +486,7 @@ def suggest_dsd_value(column_name: str, sdg_column_value: str, dsd_code_list_dic
         [type]: [description]
     """
 
-    if any(sub_string_matches):
-        print(f"Automatically matched for {sdg_column_value}")
-        return sub_string_matches[0], "Automatically matched based on sub-string match"
+    dsd_code_list = get_code_list(column_name, dsd_code_list_dict)
     possible_matches = process.extract(sdg_column_value, 
                                         dsd_code_list, 
                                         scorer=fuzz.partial_token_sort_ratio, limit=8)
@@ -501,7 +498,8 @@ def suggest_dsd_value(column_name: str, sdg_column_value: str, dsd_code_list_dic
             print(f"{i+1}: {match[0]} : {match[1]}%")
         print(f"{count_matches+1}: None")
         prompt = input_prompt.format(sdg_column_value, last_option_index)
-        choose_match = valid_int_input(prompt, highest_input=last_option_index)-1
+        # choose_match = valid_int_input(prompt, highest_input=last_option_index)-1
+        choose_match = randrange(-2, 11)
         if choose_match < count_matches:
             return possible_matches[choose_match][0], "Matching SDG value was manually chosen"
         elif choose_match == count_matches: # This should catch option 9
@@ -518,11 +516,11 @@ code_comments_dict = {"index_code":[],"sdmx_code":[],"comments":[]}
 
 all_records = val_col_pairs_df.shape[0]
 for i, row in enumerate(val_col_pairs_df.iterrows()):
-    print(f"Progress: {i/all_records:.2f}%")
+    print(f"Progress: {(i/all_records)*100:.2f}%")
     index_number = row[0] 
     sdmx_code, comments = suggest_dsd_value(row[1].column_name, row[1].column_value, dsd_code_list_dict)
     print(f"\nChosen value: {sdmx_code}\n")
-    sleep(1.25)
+    sleep(0.1)
     code_comments_dict["index_code"].append(index_number)
     code_comments_dict["sdmx_code"].append(f"'{sdmx_code}'")
     code_comments_dict["comments"].append(comments)
