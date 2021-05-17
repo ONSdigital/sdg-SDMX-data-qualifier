@@ -479,8 +479,9 @@ Or press {} if there is no suitable match:  """
 #             return "None", "No matches were manually chosen for {sdg_column_value}"
 #     return "None", f"Automatic. No matches were found for {sdg_column_value}"
 
-def get_name_list(column_name, dsd_code_list_dict=dsd_code_name_list_dict):
-    return dsd_code_list_dict[column_name].keys()
+for col_name,manual_values_df in manual_values_df.groupby("column_name"):
+    for value in manual_values_df.sdmx_code.unique():
+        dsd_code_name_list_dict[col_name][value]
 
 def suggest_dsd_value(column_name: str, sdg_column_value: str, dsd_code_list_dict: dict):
     """This is the iterrows solution
@@ -511,8 +512,8 @@ def suggest_dsd_value(column_name: str, sdg_column_value: str, dsd_code_list_dic
         user_match_choice = valid_int_input(prompt, highest_input=last_option_index)-1
         if user_match_choice < count_matches:
             selected_match = possible_matches[user_match_choice][0]
-            print(f"\nChosen value: {selected_match}\n")
-            sleep(0.5)
+            print(f"\nChosen value: {selected_match}")
+            sleep(0.75)
             sdmx_code_ = dsd_code_list_dict[column_name][selected_match]
             return sdmx_code_, "Matching SDG value was manually chosen"
         elif user_match_choice == count_matches: # This should catch the "None" option, usually 9
@@ -521,16 +522,30 @@ def suggest_dsd_value(column_name: str, sdg_column_value: str, dsd_code_list_dic
             print("There has been some exceptional error")
     return "None", f"Automatic. No matches were found for {sdg_column_value}"
 
-
-
-
 # ticket #46 function to map "Name:en" to "Code*"
 
-def name_to_code_mapper(name, column_name, dsd_name_code_dict):
-    """ Returns the value in the 'Code*' coumn of the SDMX DSD spreadsheet"""
-    return dsd_name_code_dict[column_name][name]
+map_manual_names_to_codes = False
 
-
+if map_manual_names_to_codes:
+    # Correcting the manually inputted SDMX names to SDMX codes
+    # load the manual values df
+    manual_values_df = pd.read_excel("manually_chosen_values.xlsx")
+    # create a mapping dictionary that is specific to each column
+    whole_df_mapper_dict = {}
+    # Grouping by 'column_name' yields 1) the 'column_name' and 2) a df with only values
+    # that contain that particular 'column_name' value
+    for col_name, manual_values_df in manual_values_df.groupby("column_name"):
+        # Get the mapping dictionary for those particular values
+        mapping_dict = dsd_code_name_list_dict[col_name]
+        for value in manual_values_df.sdmx_code.unique():
+            value = value.strip("'")
+            whole_df_mapper_dict[f'\'{value}\''] = mapping_dict.get(value)
+    # Reload the "manually_chosen_values.xlsx" file
+    manual_values_df = pd.read_excel("manually_chosen_values.xlsx")
+    # Map all the SDMX names to SDMX codes
+    manual_values_df["sdmx_code"] = manual_values_df.sdmx_code.map(whole_df_mapper_dict)
+    # Write the corrected df out to Excel
+    manual_values_df.to_excel("manually_chosen_values_corrected.xlsx")
 
 #Setting up a dictionary to ready for the construction of the dataframe for output
 code_comments_dict = {"index_code":[],"sdmx_code":[],"comments":[]}
@@ -541,11 +556,11 @@ for i, row in enumerate(val_col_pairs_df.iterrows()):
     index_number = row[0] 
     sdmx_code, comments = suggest_dsd_value(row[1].column_name, row[1].column_value, dsd_code_name_list_dict)
     print(f"\nCorresponding code: {sdmx_code}\n")
-    sleep(0.5)
+    sleep(1)
     code_comments_dict["index_code"].append(index_number)
     code_comments_dict["sdmx_code"].append(f"'{sdmx_code}'")
     code_comments_dict["comments"].append(comments)
-    
+ 
 
 match_values_df = pd.DataFrame.from_dict(code_comments_dict).set_index("index_code")
 match_values_df.rename(columns={"index_code":"index"}, inplace=True)
@@ -558,5 +573,3 @@ print(val_col_pairs_df.sample(20))
 val_col_pairs_df.to_excel("manually_chosen_values.xlsx")
 val_col_pairs_df.to_csv("testing_matching.csv", quotechar="'")
 
-
-#ticket 45 Correct the formatting of Column Mapping
