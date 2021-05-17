@@ -271,13 +271,15 @@ pd.DataFrame(data=df_build_dict).to_csv(config["sdg_cols_outfile"])
 # Import the manually updated file
 EXCEL_FILE = config["manual_excel_file_name"]
 WANTED_COLS = ["sdg_column_name", "SDMX_concept_name"]
+DROP_COLS = ["SDMX_concept_name"]
 
-def manual_excel(excel_file, wanted_cols):
+def manual_excel(excel_file, wanted_cols, drop_cols=None):
     try:
         df = pd.read_excel(excel_file, 
                             usecols=wanted_cols,
                             engine="openpyxl")
-        df.dropna(axis=0, subset=["SDMX_concept_name"], inplace=True)
+        if drop_cols:
+            df.dropna(axis=0, subset=drop_cols, inplace=True)
         print("The manual-input Excel file has been imported.")
         return df    
     except Exception as ex:
@@ -289,7 +291,7 @@ def manual_excel(excel_file, wanted_cols):
                     Error Message: {ex}""")
 
 # Make a df of the cols         
-mapped_columns_df = manual_excel(EXCEL_FILE, WANTED_COLS)
+mapped_columns_df = manual_excel(EXCEL_FILE, WANTED_COLS, DROP_COLS)
 
 # Ticket 20  - Get all disagregation values and match them with their
 # respective column titles. Output as a df and csv  
@@ -573,3 +575,8 @@ print(val_col_pairs_df.sample(20))
 val_col_pairs_df.to_excel("manually_chosen_values.xlsx")
 val_col_pairs_df.to_csv("testing_matching.csv", quotechar="'")
 
+# Ticket 45 
+column_mapping_45_df = manual_excel(EXCEL_FILE, WANTED_COLS)
+column_mapping_45_df.dropna(subset=["SDMX_Concept_ID"], inplace=True)
+column_mapping_45_df.rename(columns={"sdg_column_name":"Text", "SDMX_Concept_ID":"Value"}, inplace=True)
+column_mapping_45_df.to_csv("column_mapping_45.csv")
