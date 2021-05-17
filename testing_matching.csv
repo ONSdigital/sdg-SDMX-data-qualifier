@@ -1,0 +1,410 @@
+,column_name,column_value,sdmx_code,comments
+0,Income or wealth quantile,1st quintile (lowest),'''Quintile 3''',Matching SDG value was manually chosen
+1,Income or wealth quantile,2nd quintile,'''Quintile 3''',Matching SDG value was manually chosen
+2,Income or wealth quantile,3rd quintile,'''Quintile 3''',Matching SDG value was manually chosen
+3,Income or wealth quantile,4th quintile,'''Quintile 3''',Matching SDG value was manually chosen
+4,Income or wealth quantile,5th quintile (highest),'''Quintile 3''',Matching SDG value was manually chosen
+5,Income or wealth quantile,Bottom 40%,'''Bottom 40%''',Automatically matched based on sub-string match
+6,Age,0 to 4,'''20 to 49 years old''',Automatically matched based on sub-string match
+7,Age,1 to 4,'''1 to 4 years old''',Automatically matched based on sub-string match
+8,Age,10 to 14,'''10 to 14 years old''',Automatically matched based on sub-string match
+9,Age,10 to 19,'''10 to 19 years old''',Automatically matched based on sub-string match
+10,Age,11 to 18,'''1 to 17 years old''',Matching SDG value was manually chosen
+11,Age,12 to 13,'''12 to 17 years old''',Matching SDG value was manually chosen
+12,Age,13 to 14,'''10 to 14 years old''',Matching SDG value was manually chosen
+13,Age,15 and under,'''under 1 year old''',Matching SDG value was manually chosen
+14,Age,15 to 17,'''15 to 17 years old''',Automatically matched based on sub-string match
+15,Age,15 to 19,'''15 to 19 years old''',Automatically matched based on sub-string match
+16,Age,15 to 24,'''15 to 24 years old''',Automatically matched based on sub-string match
+17,Age,1.5 to 3,'''5 to 14 years old''',Matching SDG value was manually chosen
+18,Age,16 to 17,'''10 to 17 years old''',Matching SDG value was manually chosen
+19,Age,16 to 19 *,'''18 to 19 years old''',Matching SDG value was manually chosen
+20,Age,16 to 19,'''18 to 19 years old''',Matching SDG value was manually chosen
+21,Age,16 to 24,'''16 to 24 years old''',Automatically matched based on sub-string match
+22,Age,16 to 24 #,'''10 to 24 years old''',Matching SDG value was manually chosen
+23,Age,16 to 64,'''16 to 24 years old''',Matching SDG value was manually chosen
+24,Age,17 and under,'''under 15 years old''',Matching SDG value was manually chosen
+25,Age,18 to 19,'''18 to 19 years old''',Automatically matched based on sub-string match
+26,Age,18 to 20,'''18 to 29 years old''',Matching SDG value was manually chosen
+27,Age,18 to 21,'''18 to 27 years old''',Matching SDG value was manually chosen
+28,Age,18 to 24,'''18 to 24 years old''',Automatically matched based on sub-string match
+29,Age,19 and under,'''under 15 years old''',Matching SDG value was manually chosen
+30,Age,19 to 24,'''14 to 24 years old''',Matching SDG value was manually chosen
+31,Age,19 to 64,'''19 to 65 years old''',Matching SDG value was manually chosen
+32,Age,20 and under,'''under 1 month old''',Matching SDG value was manually chosen
+33,Age,20 to 24,'''20 to 24 years old''',Automatically matched based on sub-string match
+34,Age,20 to 24 *,'''10 to 24 years old''',Matching SDG value was manually chosen
+35,Age,21 to 24,'''14 to 24 years old''',Matching SDG value was manually chosen
+36,Age,21 to 40,'''12 to 14 years old''',Matching SDG value was manually chosen
+37,Age,22 to 29,'''25 to 29 years old''',Matching SDG value was manually chosen
+38,Age,24 to 29,'''20 to 29 years old''',Matching SDG value was manually chosen
+39,Age,25 to 29,'''25 to 29 years old''',Automatically matched based on sub-string match
+40,Age,25 to 34,'''25 to 34 years old''',Automatically matched based on sub-string match
+41,Age,25 to 49,'''20 to 49 years old''',Matching SDG value was manually chosen
+42,Age,29 and under,'''under 1 year old''',Matching SDG value was manually chosen
+43,Age,2,'''10 to 24 years old''',Automatically matched based on sub-string match
+44,Age,3 to 4,'''10 to 14 years old''',Matching SDG value was manually chosen
+45,Age,30 to 34,'''30 to 34 years old''',Automatically matched based on sub-string match
+46,Age,30 to 39,'''30 to 39 years old''',Automatically matched based on sub-string match
+47,Age,30 to 49,'''30 to 34 years old''',Matching SDG value was manually chosen
+48,Age,35 to 39,'''35 to 39 years old''',Automatically matched based on sub-string match
+49,Age,35 to 44,'''35 to 44 years old''',Automatically matched based on sub-string match
+50,Age,35 to 49,'''35 to 49 years old''',Automatically matched based on sub-string match
+51,Age,35 to 54,'''35 to 49 years old''',Matching SDG value was manually chosen
+52,Age,3,'''36 to 59 months old''',Automatically matched based on sub-string match
+53,Age,4 and under,'''under 1 year old''',Matching SDG value was manually chosen
+54,Age,4 to 10,'''10 to 24 years old''',Matching SDG value was manually chosen
+55,Age,4,'''1 to 14 years old''',Automatically matched based on sub-string match
+56,Age,40 and over,'''6 years old and over''',Matching SDG value was manually chosen
+57,Age,40 to 44,'''40 to 44 years old''',Automatically matched based on sub-string match
+58,Age,40 to 49,'''40 to 49 years old''',Automatically matched based on sub-string match
+59,Age,41 to 60,'''1 to 14 years old''',Matching SDG value was manually chosen
+60,Age,45 and over,'''6 years old and over''',Matching SDG value was manually chosen
+61,Age,45 to 49,'''45 to 49 years old''',Automatically matched based on sub-string match
+62,Age,45 to 54,'''45 to 54 years old''',Automatically matched based on sub-string match
+63,Age,5 to 14,'''5 to 14 years old''',Automatically matched based on sub-string match
+64,Age,5 to 15,'''5 to 14 years old''',Matching SDG value was manually chosen
+65,Age,5 to 9,'''5 to 9 years old''',Automatically matched based on sub-string match
+66,Age,50 to 54,'''50 to 54 years old''',Automatically matched based on sub-string match
+67,Age,50 to 59,'''50 to 59 years old''',Automatically matched based on sub-string match
+68,Age,50 to 64,'''20 to 64 years old''',Matching SDG value was manually chosen
+69,Age,55 and over #,'''6 years old and over''',Matching SDG value was manually chosen
+70,Age,55 to 59,'''55 to 59 years old''',Automatically matched based on sub-string match
+71,Age,55 to 59 *,'''45 to 59 years old''',Matching SDG value was manually chosen
+72,Age,55 to 64,'''55 to 64 years old''',Automatically matched based on sub-string match
+73,Age,60 and over,'''5 years old and over''',Matching SDG value was manually chosen
+74,Age,60 to 64,'''60 to 64 years old''',Automatically matched based on sub-string match
+75,Age,60 to 64 *,'''20 to 64 years old''',Matching SDG value was manually chosen
+76,Age,60 to 69,'''60 to 69 years old''',Automatically matched based on sub-string match
+77,Age,61 and over,'''6 years old and over''',Matching SDG value was manually chosen
+78,Age,65 and over,'''5 years old and over''',Matching SDG value was manually chosen
+79,Age,65 and over *,'''5 years old and over''',Matching SDG value was manually chosen
+80,Age,65 to 69,'''65 to 69 years old''',Automatically matched based on sub-string match
+81,Age,65 to 74,'''65 to 74 years old''',Automatically matched based on sub-string match
+82,Age,70 and over,'''5 years old and over''',Matching SDG value was manually chosen
+83,Age,70 to 74,'''70 to 74 years old''',Automatically matched based on sub-string match
+84,Age,75 and over,'''5 years old and over''',Matching SDG value was manually chosen
+85,Age,75 to 79,'''75 to 79 years old''',Automatically matched based on sub-string match
+86,Age,75 to 84,'''75 to 84 years old''',Automatically matched based on sub-string match
+87,Age,80 to 84,'''80 to 84 years old''',Automatically matched based on sub-string match
+88,Age,85 and over,'''5 years old and over''',Matching SDG value was manually chosen
+89,Age,85 to 89,'''85 to 89 years old''',Automatically matched based on sub-string match
+90,Age,85+,'''85 years old and over''',Matching SDG value was manually chosen
+91,Age,90 and over,'''5 years old and over''',Matching SDG value was manually chosen
+92,Age,By 1st birthday,'''under 1 month old''',Matching SDG value was manually chosen
+93,Age,By 2nd birthday,'''5 years old and over''',Matching SDG value was manually chosen
+94,Age,By 5th birthday,'''36 to 59 months old''',Matching SDG value was manually chosen
+95,Age,By age 17,'''under 1 year old''',Matching SDG value was manually chosen
+96,Age,By age 18,'''18 years old and over''',Matching SDG value was manually chosen
+97,Age,Over 65,'''6 years old and over''',Matching SDG value was manually chosen
+98,Age,Under 1,'''Under 16 years old''',Automatically matched based on sub-string match
+99,Age,Under 15,'''under 1 year old''',Matching SDG value was manually chosen
+100,Age,Under 16,'''Under 16 years old''',Automatically matched based on sub-string match
+101,Sex,Boys,'''Non response''',Matching SDG value was manually chosen
+102,Sex,Female,'''Female''',Automatically matched based on sub-string match
+103,Sex,Girls,'''Not available''',Matching SDG value was manually chosen
+104,Sex,Male,'''Male''',Automatically matched based on sub-string match
+105,Sex,Men,'''Both sexes or no breakdown by sex''',Matching SDG value was manually chosen
+106,Sex,Women,'''Both sexes or no breakdown by sex''',Matching SDG value was manually chosen
+107,Reference area,Africa,'''Africa''',Automatically matched based on sub-string match
+108,Reference area,Americas,'''Americas''',Automatically matched based on sub-string match
+109,Reference area,Asia,'''Eastern Asia''',Automatically matched based on sub-string match
+110,Reference area,'Developing countries, unspecified','''Developing regions''',Matching SDG value was manually chosen
+111,Reference area,Europe,'''Southern Europe''',Automatically matched based on sub-string match
+112,Reference area,Pacific,'''Asia and the Pacific (ILO)''',Automatically matched based on sub-string match
+113,Reference area,Afghanistan,'''Afghanistan''',Automatically matched based on sub-string match
+114,Reference area,'Africa, regional','''Central African Republic''',Matching SDG value was manually chosen
+115,Reference area,Albania,'''Albania''',Automatically matched based on sub-string match
+116,Reference area,Algeria,'''Algeria''',Automatically matched based on sub-string match
+117,Reference area,'America, regional','''Central America''',Matching SDG value was manually chosen
+118,Reference area,Angola,'''Angola''',Automatically matched based on sub-string match
+119,Reference area,Anguilla,'''Anguilla''',Automatically matched based on sub-string match
+120,Reference area,Antigua and Barbuda,'''Antigua and Barbuda''',Automatically matched based on sub-string match
+121,Reference area,Argentina,'''Argentina''',Automatically matched based on sub-string match
+122,Reference area,Armenia,'''Armenia''',Automatically matched based on sub-string match
+123,Reference area,'Asia, regional','''Regional Centres (FAO)''',Matching SDG value was manually chosen
+124,Reference area,Azerbaijan,'''Azerbaijan''',Automatically matched based on sub-string match
+125,Reference area,Bangladesh,'''Bangladesh''',Automatically matched based on sub-string match
+126,Reference area,Barbados,'''Barbados''',Automatically matched based on sub-string match
+127,Reference area,Belarus,'''Belarus''',Automatically matched based on sub-string match
+128,Reference area,Belize,'''Belize''',Automatically matched based on sub-string match
+129,Reference area,Benin,'''Benin''',Automatically matched based on sub-string match
+130,Reference area,Bhutan,'''Bhutan''',Automatically matched based on sub-string match
+131,Reference area,Bolivia,'''Bolivia (Plurinational State of)''',Automatically matched based on sub-string match
+132,Reference area,Bosnia-Herzegovina,'''Bosnia and Herzegovina''',Matching SDG value was manually chosen
+133,Reference area,Botswana,'''Botswana''',Automatically matched based on sub-string match
+134,Reference area,Brazil,'''Brazil''',Automatically matched based on sub-string match
+135,Reference area,Burkina Faso,'''Burkina Faso''',Automatically matched based on sub-string match
+136,Reference area,Burma,'''Bahrain''',Matching SDG value was manually chosen
+137,Reference area,Burundi,'''Burundi''',Automatically matched based on sub-string match
+138,Reference area,Cambodia,'''Cambodia''',Automatically matched based on sub-string match
+139,Reference area,Cameroon,'''Cameroon''',Automatically matched based on sub-string match
+140,Reference area,Cape Verde,'''Cabo Verde''',Matching SDG value was manually chosen
+141,Reference area,Central African Rep.,'''Central African Republic''',Matching SDG value was manually chosen
+142,Reference area,'Central Asia, regional','''Central Asia''',Matching SDG value was manually chosen
+143,Reference area,Chad,'''Chad''',Automatically matched based on sub-string match
+144,Reference area,Chile,'''Chile''',Automatically matched based on sub-string match
+145,Reference area,China,'''China''',Automatically matched based on sub-string match
+146,Reference area,Colombia,'''Colombia''',Automatically matched based on sub-string match
+147,Reference area,Comoros,'''Comoros''',Automatically matched based on sub-string match
+148,Reference area,'Congo, Rep.','''Congo''',Matching SDG value was manually chosen
+149,Reference area,Costa Rica,'''Costa Rica''',Automatically matched based on sub-string match
+150,Reference area,'Cote d''Ivoire','''Côte d''Ivoire''',Matching SDG value was manually chosen
+151,Reference area,Croatia,'''Croatia''',Automatically matched based on sub-string match
+152,Reference area,Cuba,'''Cuba''',Automatically matched based on sub-string match
+153,Reference area,'Democratic People''s Republic of Korea','''Democratic People''s Republic of Korea''',Automatically matched based on sub-string match
+154,Reference area,Democratic Republic of the Congo,'''Democratic Republic of the Congo''',Automatically matched based on sub-string match
+155,Reference area,Djibouti,'''Djibouti''',Automatically matched based on sub-string match
+156,Reference area,Dominica,'''Dominica''',Automatically matched based on sub-string match
+157,Reference area,Dominican Republic,'''Dominican Republic''',Automatically matched based on sub-string match
+158,Reference area,Ecuador,'''Ecuador''',Automatically matched based on sub-string match
+159,Reference area,Egypt,'''Egypt''',Automatically matched based on sub-string match
+160,Reference area,El Salvador,'''El Salvador''',Automatically matched based on sub-string match
+161,Reference area,Eritrea,'''Eritrea''',Automatically matched based on sub-string match
+162,Reference area,Ethiopia,'''Ethiopia''',Automatically matched based on sub-string match
+163,Reference area,'Europe, regional','''Peru''',Matching SDG value was manually chosen
+164,Reference area,'Far East Asia, regional','''Eastern Asia''',Matching SDG value was manually chosen
+165,Reference area,Fiji,'''Fiji''',Automatically matched based on sub-string match
+166,Reference area,Former Yugoslav Republic of Macedonia (FYROM),'''Republic of Korea''',Matching SDG value was manually chosen
+167,Reference area,Gabon,'''Gabon''',Automatically matched based on sub-string match
+168,Reference area,Gambia,'''Gambia''',Automatically matched based on sub-string match
+169,Reference area,Georgia,'''South Georgia and the South Sandwich Islands''',Automatically matched based on sub-string match
+170,Reference area,Ghana,'''Ghana''',Automatically matched based on sub-string match
+171,Reference area,Grenada,'''Grenada''',Automatically matched based on sub-string match
+172,Reference area,Guatemala,'''Guatemala''',Automatically matched based on sub-string match
+173,Reference area,Guinea-Bissau,'''Guinea-Bissau''',Automatically matched based on sub-string match
+174,Reference area,Guinea,'''Equatorial Guinea''',Automatically matched based on sub-string match
+175,Reference area,Guyana,'''Guyana''',Automatically matched based on sub-string match
+176,Reference area,Haiti,'''Haiti''',Automatically matched based on sub-string match
+177,Reference area,Honduras,'''Honduras''',Automatically matched based on sub-string match
+178,Reference area,India,'''British Indian Ocean Territory''',Automatically matched based on sub-string match
+179,Reference area,Indonesia,'''Indonesia''',Automatically matched based on sub-string match
+180,Reference area,Iran,'''Iran (Islamic Republic of)''',Automatically matched based on sub-string match
+181,Reference area,Iraq,'''Iraq''',Automatically matched based on sub-string match
+182,Reference area,Jamaica,'''Jamaica''',Automatically matched based on sub-string match
+183,Reference area,Jordan,'''Jordan''',Automatically matched based on sub-string match
+184,Reference area,Kazakhstan,'''Kazakhstan''',Automatically matched based on sub-string match
+185,Reference area,Kenya,'''Kenya''',Automatically matched based on sub-string match
+186,Reference area,Kiribati,'''Kiribati''',Automatically matched based on sub-string match
+187,Reference area,Kosovo,'''Kosovo''',Automatically matched based on sub-string match
+188,Reference area,Kyrgyz Republic,'''Republic of Korea''',Matching SDG value was manually chosen
+189,Reference area,Laos,'''Lao People''s Democratic Republic''',Matching SDG value was manually chosen
+190,Reference area,Lebanon,'''Lebanon''',Automatically matched based on sub-string match
+191,Reference area,Lesotho,'''Lesotho''',Automatically matched based on sub-string match
+192,Reference area,Liberia,'''Liberia''',Automatically matched based on sub-string match
+193,Reference area,Libya,'''Libya''',Automatically matched based on sub-string match
+194,Reference area,Madagascar,'''Madagascar''',Automatically matched based on sub-string match
+195,Reference area,Malawi,'''Malawi''',Automatically matched based on sub-string match
+196,Reference area,Malaysia,'''Malaysia''',Automatically matched based on sub-string match
+197,Reference area,Maldives,'''Maldives''',Automatically matched based on sub-string match
+198,Reference area,Mali,'''Mali''',Automatically matched based on sub-string match
+199,Reference area,Marshall Islands,'''Marshall Islands''',Automatically matched based on sub-string match
+200,Reference area,Mauritania,'''Mauritania''',Automatically matched based on sub-string match
+201,Reference area,Mauritius,'''Mauritius''',Automatically matched based on sub-string match
+202,Reference area,Mexico,'''Mexico''',Automatically matched based on sub-string match
+203,Reference area,Micronesia,'''Micronesia''',Automatically matched based on sub-string match
+204,Reference area,'Middle East, regional','''Guinea''',Matching SDG value was manually chosen
+205,Reference area,Moldova,'''Republic of Moldova''',Automatically matched based on sub-string match
+206,Reference area,Mongolia,'''Mongolia''',Automatically matched based on sub-string match
+207,Reference area,Montenegro,'''Montenegro''',Automatically matched based on sub-string match
+208,Reference area,Montserrat,'''Montserrat''',Automatically matched based on sub-string match
+209,Reference area,Morocco,'''Morocco''',Automatically matched based on sub-string match
+210,Reference area,Mozambique,'''Mozambique''',Automatically matched based on sub-string match
+211,Reference area,Myanmar,'''Myanmar''',Automatically matched based on sub-string match
+212,Reference area,Namibia,'''Namibia''',Automatically matched based on sub-string match
+213,Reference area,Nauru,'''Nauru''',Automatically matched based on sub-string match
+214,Reference area,Nepal,'''Nepal''',Automatically matched based on sub-string match
+215,Reference area,Nicaragua,'''Nicaragua''',Automatically matched based on sub-string match
+216,Reference area,Niger,'''Niger''',Automatically matched based on sub-string match
+217,Reference area,Nigeria,'''Nigeria''',Automatically matched based on sub-string match
+218,Reference area,'North & Central America, regional','''Americas''',Matching SDG value was manually chosen
+219,Reference area,'North of Sahara, regional','''Réunion''',Matching SDG value was manually chosen
+220,Reference area,'Oceania, regional','''Asia''',Matching SDG value was manually chosen
+221,Reference area,Oman,'''Oman''',Automatically matched based on sub-string match
+222,Reference area,Pakistan,'''Pakistan''',Automatically matched based on sub-string match
+223,Reference area,Palau,'''Palau''',Automatically matched based on sub-string match
+224,Reference area,Panama,'''Panama''',Automatically matched based on sub-string match
+225,Reference area,Papua New Guinea,'''Papua New Guinea''',Automatically matched based on sub-string match
+226,Reference area,Paraguay,'''Paraguay''',Automatically matched based on sub-string match
+227,Reference area,Peru,'''Peru''',Automatically matched based on sub-string match
+228,Reference area,Philippines,'''Philippines''',Automatically matched based on sub-string match
+229,Reference area,Rwanda,'''Rwanda''',Automatically matched based on sub-string match
+230,Reference area,Samoa,'''American Samoa''',Automatically matched based on sub-string match
+231,Reference area,Sao Tome & Principe,'''Sao Tome and Principe''',Matching SDG value was manually chosen
+232,Reference area,Senegal,'''Senegal''',Automatically matched based on sub-string match
+233,Reference area,Serbia,'''Serbia''',Automatically matched based on sub-string match
+234,Reference area,Seychelles,'''Seychelles''',Automatically matched based on sub-string match
+235,Reference area,Sierra Leone,'''Sierra Leone''',Automatically matched based on sub-string match
+236,Reference area,Solomon Islands,'''Solomon Islands''',Automatically matched based on sub-string match
+237,Reference area,Somalia,'''Somalia''',Automatically matched based on sub-string match
+238,Reference area,South Africa,'''South Africa''',Automatically matched based on sub-string match
+239,Reference area,'South America, regional','''Central America''',Matching SDG value was manually chosen
+240,Reference area,'South Asia, regional','''Central and Southern Asia''',Matching SDG value was manually chosen
+241,Reference area,'South & Central Asia, regional','''Central Asia''',Matching SDG value was manually chosen
+242,Reference area,'South of Sahara, regional','''South Africa''',Matching SDG value was manually chosen
+243,Reference area,South Sudan,'''South Sudan''',Automatically matched based on sub-string match
+244,Reference area,Sri Lanka,'''Sri Lanka''',Automatically matched based on sub-string match
+245,Reference area,St. Helena,'''Saint Helena''',Matching SDG value was manually chosen
+246,Reference area,St. Kitts-Nevis,'''Saint Kitts and Nevis''',Matching SDG value was manually chosen
+247,Reference area,St. Lucia,'''Saint Lucia''',Matching SDG value was manually chosen
+248,Reference area,States Ex-Yugoslavia unspecified,'''Latvia''',Matching SDG value was manually chosen
+249,Reference area,St.Vincent & Grenadines,'''Grenada''',Matching SDG value was manually chosen
+250,Reference area,Sudan,'''South Sudan''',Automatically matched based on sub-string match
+251,Reference area,Suriname,'''Suriname''',Automatically matched based on sub-string match
+252,Reference area,Swaziland,'''Thailand''',Matching SDG value was manually chosen
+253,Reference area,Syria,'''Syrian Arab Republic''',Automatically matched based on sub-string match
+254,Reference area,Tajikistan,'''Tajikistan''',Automatically matched based on sub-string match
+255,Reference area,Tanzania,'''United Republic of Tanzania''',Automatically matched based on sub-string match
+256,Reference area,Thailand,'''Thailand''',Automatically matched based on sub-string match
+257,Reference area,Timor-Leste,'''Timor-Leste''',Automatically matched based on sub-string match
+258,Reference area,Togo,'''Togo''',Automatically matched based on sub-string match
+259,Reference area,Tonga,'''Tonga''',Automatically matched based on sub-string match
+260,Reference area,Trinidad & Tobago,'''Trinidad and Tobago''',Matching SDG value was manually chosen
+261,Reference area,Tunisia,'''Tunisia''',Automatically matched based on sub-string match
+262,Reference area,Turkey,'''Turkey''',Automatically matched based on sub-string match
+263,Reference area,Turkmenistan,'''Turkmenistan''',Automatically matched based on sub-string match
+264,Reference area,Tuvalu,'''Tuvalu''',Automatically matched based on sub-string match
+265,Reference area,Uganda,'''Uganda''',Automatically matched based on sub-string match
+266,Reference area,Ukraine,'''Ukraine''',Automatically matched based on sub-string match
+267,Reference area,Uruguay,'''Uruguay''',Automatically matched based on sub-string match
+268,Reference area,Uzbekistan,'''Uzbekistan''',Automatically matched based on sub-string match
+269,Reference area,Vanuatu,'''Vanuatu''',Automatically matched based on sub-string match
+270,Reference area,Venezuela,'''Venezuela (Bolivarian Republic of)''',Automatically matched based on sub-string match
+271,Reference area,Vietnam,'''Viet Nam''',Matching SDG value was manually chosen
+272,Reference area,West Bank & Gaza Strip,'''Austria''',Matching SDG value was manually chosen
+273,Reference area,'West Indies, regional','''India''',Matching SDG value was manually chosen
+274,Reference area,Yemen,'''Yemen''',Automatically matched based on sub-string match
+275,Reference area,Zambia,'''Zambia''',Automatically matched based on sub-string match
+276,Reference area,Zimbabwe,'''Zimbabwe''',Automatically matched based on sub-string match
+277,Type of product,Biomass,'''Biomass (material flows)''',Automatically matched based on sub-string match
+278,Type of product,Fossil fuels,'''Fossil fuels (material flows)''',Automatically matched based on sub-string match
+279,Type of product,Metal ores excluding precious metals,'''Clothing''',Matching SDG value was manually chosen
+280,Type of product,Metal ores,'''Metal ores (material flows)''',Automatically matched based on sub-string match
+281,Type of product,Non-metallic minerals,'''Non-metallic minerals (material flows)''',Automatically matched based on sub-string match
+282,Economic activity,'Agriculture, forestry and fishing','''Agriculture, forestry and fishing''',Automatically matched based on sub-string match
+283,Economic activity,Construction,'''Construction''',Automatically matched based on sub-string match
+284,Economic activity,'Electricity, gas, steam and air conditioning supply','''Electricity, gas, steam and air conditioning supply''',Automatically matched based on sub-string match
+285,Economic activity,Households,'''Services, and activities by households''',Matching SDG value was manually chosen
+286,Economic activity,'Manufacture of basic metals and fabricated metal products, except machinery and equipment','''Manufacturing excl. coke and refined petroleum products and repair and installation of machinery and equipment''',Matching SDG value was manually chosen
+287,Economic activity,'Manufacture of chemical, pharmaceutical, rubber and plastic products','''Manufacturing excl. coke and refined petroleum products and repair and installation of machinery and equipment''',Matching SDG value was manually chosen
+288,Economic activity,Manufacture of coke and refined petroleum products,'''Manufacturing''',Matching SDG value was manually chosen
+289,Economic activity,'Manufacture of computer, electronic and optical products, electrical equipment, motor vehicles and other transport equipment','''Services''',Matching SDG value was manually chosen
+290,Economic activity,'Manufacture of food products, beverages and tobacco products','''Manufacturing excl. coke and refined petroleum products and repair and installation of machinery and equipment''',Matching SDG value was manually chosen
+291,Economic activity,'Manufacture of furniture, jewellery, musical instruments, toys, repair and installation or machinery and equipment','''Manufacturing excl. coke and refined petroleum products and repair and installation of machinery and equipment''',Matching SDG value was manually chosen
+292,Economic activity,Manufacture of other non-metallic mineral products,'''Manufacturing excl. coke and refined petroleum products and repair and installation of machinery and equipment''',Matching SDG value was manually chosen
+293,Economic activity,'Manufacture of paper and paper products, printing and reproduction or recorded media','''Manufacturing''',Matching SDG value was manually chosen
+294,Economic activity,'Manufacture of textiles, wearing apparel, leather and related products','''Manufacturing excl. coke and refined petroleum products and repair and installation of machinery and equipment''',Matching SDG value was manually chosen
+295,Economic activity,'Manufacture of wood and of products of wood and cork, except furniture, manufacture of articles of straw and plaiting materials','''Non-agriculture''',Matching SDG value was manually chosen
+296,Economic activity,Mining and quarrying,'''Mining and quarrying''',Automatically matched based on sub-string match
+297,Economic activity,Services (except wholesale of waste and scrap),'''Wholesale and retail trade; repair of motor vehicles and motorcycles''',Matching SDG value was manually chosen
+298,Economic activity,'Water collection, treatment and supply, sewerage, remediation activities and other waste management services','''Education''',Matching SDG value was manually chosen
+299,Degree of urbanisation,Rural,'''Rural''',Automatically matched based on sub-string match
+300,Degree of urbanisation,Urban,'''Urban''',Automatically matched based on sub-string match
+301,Economic activity,Accommodation and food service activities #,'''Services''',Matching SDG value was manually chosen
+302,Economic activity,Accommodation and food services,'''Accommodation and food service activities''',Matching SDG value was manually chosen
+303,Economic activity,Activities of households as employers; undifferentiated goods and services-producing activities of households for own use,'''Services''',Matching SDG value was manually chosen
+304,Economic activity,Activities of households as employers; undifferentiated goods-and services-producing activities of households for own use #,'''Services''',Matching SDG value was manually chosen
+305,Economic activity,Activities of households as employers,'''Activities of households as employers; undifferentiated goods- and services-producing activities of households for own use''',Automatically matched based on sub-string match
+306,Economic activity,Administrative and support activities,'''Activities of households as employers; undifferentiated goods- and services-producing activities of households for own use''',Matching SDG value was manually chosen
+307,Economic activity,Administrative and support service activities #,'''Services''',Matching SDG value was manually chosen
+308,Economic activity,Administrative and support service activities,'''Administrative and support service activities''',Automatically matched based on sub-string match
+310,Economic activity,'Arts, entertainment and recreation #','''Education''',Matching SDG value was manually chosen
+311,Economic activity,'Arts, entertainment and recreation','''Arts, entertainment and recreation''',Automatically matched based on sub-string match
+313,Economic activity,Education #,'''Water supply; sewerage, waste management and remediation activities''',Matching SDG value was manually chosen
+314,Economic activity,Education,'''Education''',Automatically matched based on sub-string match
+315,Economic activity,'Electricity, gas, steam and air conditioning supply #','''Construction''',Matching SDG value was manually chosen
+317,Economic activity,Financial and insurance activities #,'''Professional, scientific and technical activities''',Matching SDG value was manually chosen
+318,Economic activity,Financial and insurance activities,'''Financial and insurance activities''',Automatically matched based on sub-string match
+319,Economic activity,Financial and insurance,'''Financial and insurance activities''',Automatically matched based on sub-string match
+320,Economic activity,'Gas, electricity and water supply; sewerage, waste and recycling *','''Electricity, gas, steam and air conditioning supply''',Matching SDG value was manually chosen
+321,Economic activity,Human health and social activities,'''Real estate activities''',Matching SDG value was manually chosen
+322,Economic activity,Human health and social work activities #,'''Real estate activities''',Matching SDG value was manually chosen
+323,Economic activity,Human health and social work activities,'''Human health and social work activities''',Automatically matched based on sub-string match
+324,Economic activity,Information and communication #,'''Education''',Matching SDG value was manually chosen
+325,Economic activity,Information and communication,'''Information and communication''',Automatically matched based on sub-string match
+326,Economic activity,Manufacturing,'''Manufacturing''',Automatically matched based on sub-string match
+328,Economic activity,Other service activities #,'''Services''',Matching SDG value was manually chosen
+329,Economic activity,Other service activities,'''Other service activities''',Automatically matched based on sub-string match
+330,Economic activity,'Professional, scientific and technical activities #','''Financial and insurance activities''',Matching SDG value was manually chosen
+331,Economic activity,'Professional, scientific and technical activities','''Professional, scientific and technical activities''',Automatically matched based on sub-string match
+332,Economic activity,Public administration and defence; compulsory social security #,'''Construction''',Matching SDG value was manually chosen
+333,Economic activity,Public administration and defence; compulsory social security,'''Public administration and defence; compulsory social security''',Automatically matched based on sub-string match
+334,Economic activity,Real estate activities #,'''Human health and social work activities''',Matching SDG value was manually chosen
+335,Economic activity,Real estate activities,'''Real estate activities''',Automatically matched based on sub-string match
+336,Economic activity,Real estate,'''Real estate activities''',Automatically matched based on sub-string match
+337,Economic activity,Service industries *,'''Services''',Matching SDG value was manually chosen
+338,Economic activity,Transport and storage,'''Administrative and support service activities''',Matching SDG value was manually chosen
+339,Economic activity,Transportation and storage #,'''Industries''',Matching SDG value was manually chosen
+340,Economic activity,Transportation and storage,'''Transportation and storage''',Automatically matched based on sub-string match
+341,Economic activity,'Water supply; sewerage, waste management and remediation activities #','''Education''',Matching SDG value was manually chosen
+342,Economic activity,'Water supply; sewerage, waste management and remediation activities','''Water supply; sewerage, waste management and remediation activities''',Automatically matched based on sub-string match
+343,Economic activity,Wholesale and retail trade; repair of motor vehicles and motorcycles #,'''Services''',Matching SDG value was manually chosen
+344,Economic activity,Wholesale and retail trade; repair of motor vehicles and motorcycles,'''Wholesale and retail trade; repair of motor vehicles and motorcycles''',Automatically matched based on sub-string match
+345,Economic activity,Accommodation,'''Accommodation and food service activities''',Automatically matched based on sub-string match
+346,Economic activity,Activities auxiliary to financial services and insurance activities,'''Financial and insurance activities''',Matching SDG value was manually chosen
+347,Economic activity,Activities of membership organisations,'''Real estate activities''',Matching SDG value was manually chosen
+348,Economic activity,Air transport,'''Electricity, gas, steam and air conditioning supply''',Matching SDG value was manually chosen
+349,Economic activity,Civil engineering,'''Mining and quarrying''',Matching SDG value was manually chosen
+350,Economic activity,Construction of buildings,'''Education''',Matching SDG value was manually chosen
+351,Economic activity,'Creative, arts and entertainment activities and libraries, archives, museums and other cultural activities and gambling and betting activities','''Real estate activities''',Matching SDG value was manually chosen
+352,Economic activity,'Crop and animal production, hunting and related service activities','''Education''',Matching SDG value was manually chosen
+354,Economic activity,Extraction of crude petroleum and natural gas,'''Education''',Matching SDG value was manually chosen
+355,Economic activity,'Financial service activities, except insurance and pension funding','''Financial and insurance activities''',Matching SDG value was manually chosen
+356,Economic activity,Fishing and aquaculture,'''Non-agriculture''',Matching SDG value was manually chosen
+357,Economic activity,Food and beverage service activities,'''Services, and activities by households''',Matching SDG value was manually chosen
+358,Economic activity,Forestry and logging,'''Mining and quarrying''',Matching SDG value was manually chosen
+359,Economic activity,Furniture and other manufacturing,'''Manufacturing excl. coke and refined petroleum products and repair and installation of machinery and equipment''',Matching SDG value was manually chosen
+360,Economic activity,Human health activities,'''Real estate activities''',Matching SDG value was manually chosen
+361,Economic activity,IT and other information service,'''Other service activities''',Matching SDG value was manually chosen
+362,Economic activity,Land transport and transport via pipelines,'''Industries''',Matching SDG value was manually chosen
+363,Economic activity,Legal accounting management architecture engineering tech testing,'''Arts, entertainment and recreation''',Matching SDG value was manually chosen
+364,Economic activity,Legal and accounting activities and activites of head offices; management consultancy activities,'''Financial and insurance activities''',Matching SDG value was manually chosen
+365,Economic activity,Manufacture of basic metals and metal products,'''Manufacturing excl. coke and refined petroleum products and repair and installation of machinery and equipment''',Matching SDG value was manually chosen
+366,Economic activity,Manufacture of basic pharmaceutical products and pharmaceutical preparations,'''Education''',Matching SDG value was manually chosen
+367,Economic activity,Manufacture of chemicals and chemical products,'''Manufacturing excl. coke and refined petroleum products and repair and installation of machinery and equipment''',Matching SDG value was manually chosen
+368,Economic activity,'Manufacture of coke, and refined petroleum products','''Manufacturing''',Matching SDG value was manually chosen
+369,Economic activity,Manufacture of electrical equipment,'''Non-agriculture''',Matching SDG value was manually chosen
+370,Economic activity,'Manufacture of food products, beverages and tobacco','''Manufacturing excl. coke and refined petroleum products and repair and installation of machinery and equipment''',Matching SDG value was manually chosen
+371,Economic activity,Manufacture of machinery and equipment not elsewhere classified,'''Manufacturing excl. coke and refined petroleum products and repair and installation of machinery and equipment''',Matching SDG value was manually chosen
+372,Economic activity,Manufacture of machinery and equipment,'''Manufacturing excl. coke and refined petroleum products and repair and installation of machinery and equipment''',Matching SDG value was manually chosen
+373,Economic activity,'Manufacture of rubber and plastics products, and other non-metallic mineral products','''Manufacturing excl. coke and refined petroleum products and repair and installation of machinery and equipment''',Matching SDG value was manually chosen
+374,Economic activity,'Manufacture of rubber and plastics products, & other non-metallic mineral products','''Manufacturing excl. coke and refined petroleum products and repair and installation of machinery and equipment''',Matching SDG value was manually chosen
+375,Economic activity,'Manufacture of textiles, wearing apparel and leather products','''Manufacturing excl. coke and refined petroleum products and repair and installation of machinery and equipment''',Matching SDG value was manually chosen
+376,Economic activity,Manufacture of transport equipment,'''Transportation and storage''',Matching SDG value was manually chosen
+377,Economic activity,'Manufacture of wood and paper products, and printing','''Manufacturing excl. coke and refined petroleum products and repair and installation of machinery and equipment''',Matching SDG value was manually chosen
+378,Economic activity,'Manufacturing of computer, electronic and optical products','''Manufacturing excl. coke and refined petroleum products and repair and installation of machinery and equipment''',Matching SDG value was manually chosen
+379,Economic activity,'Manufacturing of computer, electronic & optical products','''Manufacturing excl. coke and refined petroleum products and repair and installation of machinery and equipment''',Matching SDG value was manually chosen
+380,Economic activity,Mining of coal and lignite,'''Information and communication''',Matching SDG value was manually chosen
+381,Economic activity,Mining of metal ores,'''Mining and quarrying''',Matching SDG value was manually chosen
+382,Economic activity,Mining support service activities,'''Other service activities''',Matching SDG value was manually chosen
+383,Economic activity,'Motion picture, video and tv programme production, sound recording and music publishing activities and programming and broadcasting activities','''Real estate activities''',Matching SDG value was manually chosen
+384,Economic activity,Other manufacturing and repair,'''Manufacturing excl. coke and refined petroleum products and repair and installation of machinery and equipment''',Matching SDG value was manually chosen
+385,Economic activity,Other mining and quarrying,'''Agriculture, forestry and fishing''',Matching SDG value was manually chosen
+386,Economic activity,Other personal service activities,'''Other service activities''',Matching SDG value was manually chosen
+387,Economic activity,'Other professional, scientific and technical activities and veterinary activities','''Real estate activities''',Matching SDG value was manually chosen
+388,Economic activity,'Other Professional, scientific and technical activities','''Other service activities''',Matching SDG value was manually chosen
+389,Economic activity,Pension funding,'''Industries''',Matching SDG value was manually chosen
+390,Economic activity,Postal and courier activities,'''Professional, scientific and technical activities''',Matching SDG value was manually chosen
+391,Economic activity,Publishing audio visual broadcsting,'''No breakdown''',Matching SDG value was manually chosen
+393,Economic activity,Repair of computers and personal and household goods,'''Activities by households''',Matching SDG value was manually chosen
+394,Economic activity,Residential care and social work activities,'''Human health and social work activities''',Matching SDG value was manually chosen
+395,Economic activity,'Retail trade, except of motor vehicles and motorcycles','''Services''',Matching SDG value was manually chosen
+396,Economic activity,Scientific research and development,'''Professional, scientific and technical activities''',Matching SDG value was manually chosen
+397,Economic activity,'Security and investigation activities, services to buildings and landscape activities and office administrative, office support and other business support activities','''Real estate activities''',Matching SDG value was manually chosen
+398,Economic activity,'Sewerage, waste collection, treatment and disposal activities; materials recovery and remediation activities and other waste management services','''Education''',Matching SDG value was manually chosen
+399,Economic activity,Specialised construction activities,'''Education''',Matching SDG value was manually chosen
+400,Economic activity,Telecommunications,'''Information and communication''',Matching SDG value was manually chosen
+401,Economic activity,Warehousing and support activities for transportation,'''Financial and insurance activities''',Matching SDG value was manually chosen
+402,Economic activity,'Water collection, treatment and supply','''Water supply; sewerage, waste management and remediation activities''',Matching SDG value was manually chosen
+403,Economic activity,Water transport,'''Water supply; sewerage, waste management and remediation activities''',Matching SDG value was manually chosen
+404,Economic activity,Wholesale and retail trade and repair of motor vehicles and motorcycles,'''Services''',Matching SDG value was manually chosen
+405,Economic activity,'Wholesale trade, except of motor vehicles and motorcycles','''Services''',Matching SDG value was manually chosen
+406,Economic activity,Basic pharmaceutical products and pharmaceutical preparations,'''Construction''',Matching SDG value was manually chosen
+407,Economic activity,Chemicals and chemical products,'''Activities of households as employers; undifferentiated goods- and services-producing activities of households for own use''',Matching SDG value was manually chosen
+408,Economic activity,'Computer, electronic and optical products','''Education''',Matching SDG value was manually chosen
+409,Economic activity,Electrical equipment,'''Manufacturing excl. coke and refined petroleum products and repair and installation of machinery and equipment''',Matching SDG value was manually chosen
+410,Economic activity,Machinery and equipment n.e.c.,'''Water supply; sewerage, waste management and remediation activities''',Matching SDG value was manually chosen
+411,Economic activity,'Motor vehicles, trailers and semi-trailers','''Wholesale and retail trade; repair of motor vehicles and motorcycles''',Matching SDG value was manually chosen
+412,Economic activity,Other transport equipment,'''Transportation and storage''',Matching SDG value was manually chosen
+413,Economic activity,Other,'''Other service activities''',Automatically matched based on sub-string match
+414,Economic activity,Weapons and ammunition,'''Information and communication''',Matching SDG value was manually chosen

@@ -1,5 +1,6 @@
 meta_url: https://sdgdata.gov.uk/sdg-data/en/meta/all.json
 disag_url: https://sdgdata.gov.uk/sdg-data/disaggregation-by-indicator-report.csv
+dsd_url: https://unstats.un.org/sdgs/files/SDG_DSD_MATRIX.1.4.xlsm
 required_cols: 
   - other_info
   - data_non_statistical
@@ -25,6 +26,7 @@ geo_disag_terms:
 meta_outfile: meta_data.csv
 disag_outfile: disag.csv
 sdg_cols_outfile : SDG_column_names.csv
+manual_excel_file_name: sdg_sdmx_colnames-manual.xlsx
 suitability_test:
   data_non_statistical: false
   national_geographical_coverage: "United Kingdom"
@@ -32,7 +34,6 @@ suitability_test:
   proxy_indicator: false
   only_uk_data: true
   geo_disag: false
-manual_excel_file_name: sdg_sdmx_colnames-manual.xlsx
 2020indicators:
   - 13-2-2
   - 17-5-1

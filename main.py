@@ -4,6 +4,10 @@ import numpy as np
 import os
 import re
 from functools import cache
+from fuzzywuzzy import process, fuzz
+from tqdm import tqdm
+from time import sleep
+from random import randrange
 
 # Load config
 config = yaml.safe_load(open('config.yml'))
@@ -317,10 +321,10 @@ val_col_pairs_df = pd.DataFrame(construct_dict)
 # Output for #20
 val_col_pairs_df.to_csv("val_col_pairs-#20.csv")
 
-
 # Ticket 21 Swap SDG_column_names col for SDMX_column_name in sdg_col_names_vals_df
 @cache # Caching provides a 20x speed-up here
 def get_SDMX_colnm(search_value):
+    #TODO: merge this with the pd_vlookup function
     """Gets the SDMX equivilent of all of the SDG column names, by looking up the 
         SDG column name. To be used on a the sdg_column_name column of the dataframe 
         containing the SDG column names. It looks up the values sdg_column_name column 
@@ -338,6 +342,12 @@ def get_SDMX_colnm(search_value):
     val = val_df.loc[:].at[row,"SDMX_concept_name"]
     return val
 
+def pd_vlookup(search_value, search_df, search_series_nm, return_series_nm):
+    val_df = search_df[search_series_nm == search_value]
+    row = val_df.index[0]
+    val = val_df.loc[:].at[row,return_series_nm]
+    return val
+
 # Creating a new column in val_col_pairs df called sdmx_col_nm
 # which contains the SDMX equivilent of all of the SDG column names
 val_col_pairs_df["sdmx_col_nm"] = (val_col_pairs_df
@@ -351,17 +361,181 @@ val_col_pairs_df.rename(columns={"sdmx_col_nm":"column_name",
                         "SDMX_code":"sdmx_code"},
                         inplace=True)
 # Reordering columns
-order_cols = ['column_value', 'column_name', 'sdmx_code', 'comments']
+order_cols = ['column_name', 'column_value', 'sdmx_code', 'comments']
 val_col_pairs_df = val_col_pairs_df[order_cols]
 
 # De-duping column_value and column_name because there will be some duplicates
 before_shape = val_col_pairs_df.shape
 val_col_pairs_df.drop_duplicates(subset=["column_name", "column_value"], inplace=True)
 after_shape = val_col_pairs_df.shape
-print(f"""De-depuping finished.\n
-{before_shape[0] - {after_shape}[0]} records were dropped.""")
+print(f"""De-depuping finished.{before_shape[0] - after_shape[0]} records were dropped.""")
 
 # Outputting result to csv
 val_col_pairs_df.to_csv("SDMX_colnames_values_matched-#21.csv")
 
+# Import DSD
+dsd_xls = pd.ExcelFile(config['dsd_url'])
+col_name = "Age"
 
+concept_sch = pd.read_excel(dsd_xls, engine="openpyxl", sheet_name="3.Concept Scheme", skiprows=11, header=0, usecols=[2,7])
+
+def get_dsd_tab_name(concept_sch, concept_name):
+    res = concept_sch[concept_sch['Concept Name:en'] == concept_name]
+    if res.shape[0]>0:
+        row_num = res.index[0]
+        return res.at[row_num,"Code List or Uncoded"]
+    else:
+        print(f"Skipping {concept_name}, as this is not found in the concept scheme")
+        return None
+    
+
+# For each value in val_col_pairs_df.column_value, want to check
+# if there is a good match in dsd for that column
+# e.g. if the value is '16 to 64' and the column name is age
+# the function will open the worksheet in the DSD_matrix xls called CL_AGE
+# and check the "Name:en" column for a good match. 
+
+# for col_name in val_col_pairs_df.loc[:,'column_name'].unique():
+#     vals = val_col_pairs_df[val_col_pairs_df['column_name']==col_name].column_value.to_list()
+#     for val_name in vals:
+#         if val_name in dsd_codelist:
+#             print(val_name)
+#             val_col_pairs_df[val_col_pairs_df.column_value == val_name].loc[:,'sdmx_code'] = val_name
+#         else:
+#             val_col_pairs_df[val_col_pairs_df.column_value == val_name].loc[:,'sdmx_code'] = process.extract(val_name, dsd_codelist, limit=1)[0][0]
+#             val_col_pairs_df[val_col_pairs_df.column_value == val_name].loc[:,'comments'] = "-----Suggested-------"
+
+dsd_code_list_dict = {}
+for col_name in val_col_pairs_df.loc[:,'column_name'].unique():
+    tab_name = get_dsd_tab_name(concept_sch, col_name)
+    if not tab_name:
+        continue
+    dsd_codelist = pd.read_excel(dsd_xls, 
+                    engine="openpyxl",
+                    sheet_name=f"{tab_name.upper()}",
+                    skiprows=12,
+                    header=0,
+                    usecols=[4]).iloc[:,0].to_list()
+    dsd_code_list_dict[col_name] = dsd_codelist
+
+def valid_int_input(prompt, highest_input):
+    while True:
+        try:
+            inp = int(input(prompt))
+            if inp>highest_input:
+                print("\n That value is too high. Try again")
+                sleep(0.5)
+                continue
+            elif inp<1:
+                print("\n That value is too low. Try again")
+                sleep(0.5)
+                continue
+            return inp
+        except ValueError as e:
+            print("Not a proper integer! Try it again")
+
+input_prompt = """\n The SDG value to be matched is 
+    '{}'
+Choose a number from above options to select best matching SDMX value. 
+Or press {} if there is no suitable match:  """
+
+    
+# def find_suggested_dsd_value(column_name, sdg_column_value, dsd_code_list_dict):
+#     """[summary]
+
+#     Args:
+#         column_name ([type]): [description]
+#         sdg_column_value ([type]): [description]
+#         dsd_code_list_dict ([type]): [description]
+
+#     Returns:
+#         [type]: [description]
+#     """
+#     # Gets the correct codelist for the column name  
+#     dsd_code_list = dsd_code_list_dict[column_name]
+#     # Checks for sub-string matches 
+#     sub_string_matches = [dsdcode for dsdcode in dsd_code_list if sdg_column_value in dsdcode]
+#     if any(sub_string_matches):
+#         return sub_string_matches[0], "Automatically matched based on sub-string match"
+#     possible_matches = process.extract(sdg_column_value, 
+#                                         dsd_code_list, 
+#                                         scorer=fuzz.partial_token_sort_ratio, limit=8)
+#     if any(possible_matches):
+#         count_matches = len(possible_matches)
+#         last_option_index = count_matches+1
+#         for i, match in enumerate(possible_matches):
+#             print(f"{i+1}: {match[0]} : {match[1]}%")
+#         print(f"{count_matches+1}: None")
+#         prompt = input_prompt.format(sdg_column_value, last_option_index)
+#         choose_match = valid_int_input(prompt, highest_input=last_option_index)
+#         if choose_match !=count_matches+1:
+#             return possible_matches[choose_match][0], "Matching SDG value was manually chosen"
+#         else:
+#             return "None", "No matches were manually chosen for {sdg_column_value}"
+#     return "None", f"Automatic. No matches were found for {sdg_column_value}"
+
+def get_code_list(column_name, dsd_code_list_dict=dsd_code_list_dict):
+    return dsd_code_list_dict[column_name]
+
+def suggest_dsd_value(column_name: str, sdg_column_value: str, dsd_code_list_dict: dict):
+    """This is the iterrows solution
+
+    Args:
+        column_name ([type]): [description]
+        sdg_column_value ([type]): [description]
+        dsd_code_list_dict (dict): [description]
+
+    Returns:
+        [type]: [description]
+    """
+
+    dsd_code_list = get_code_list(column_name, dsd_code_list_dict)
+    possible_matches = process.extract(sdg_column_value, 
+                                        dsd_code_list, 
+                                        scorer=fuzz.partial_token_sort_ratio, limit=8)
+    if any(possible_matches):
+        count_matches = len(possible_matches)
+        # get the index/position of the last option in the list, for None
+        last_option_index = count_matches+1
+        for i, match in enumerate(possible_matches):
+            print(f"{i+1}: {match[0]} : {match[1]}%")
+        print(f"{count_matches+1}: None")
+        prompt = input_prompt.format(sdg_column_value, last_option_index)
+        choose_match = valid_int_input(prompt, highest_input=last_option_index)-1
+        # choose_match = randrange(-2, 11)
+        if choose_match < count_matches:
+            return possible_matches[choose_match][0], "Matching SDG value was manually chosen"
+        elif choose_match == count_matches: # This should catch option 9
+            return "None", f"No matches were manually chosen for {sdg_column_value}"
+        else:
+            print("There has been some exceptional error")
+    return "None", f"Automatic. No matches were found for {sdg_column_value}"
+
+
+# Create new `pandas` methods which use `tqdm` progress
+# tqdm.pandas(desc="Progress so far")
+
+code_comments_dict = {"index_code":[],"sdmx_code":[],"comments":[]}
+
+all_records = val_col_pairs_df.shape[0]
+for i, row in enumerate(val_col_pairs_df.iterrows()):
+    print(f"Progress: {(i/all_records)*100:.2f}%")
+    index_number = row[0] 
+    sdmx_code, comments = suggest_dsd_value(row[1].column_name, row[1].column_value, dsd_code_list_dict)
+    print(f"\nChosen value: {sdmx_code}\n")
+    sleep(1)
+    code_comments_dict["index_code"].append(index_number)
+    code_comments_dict["sdmx_code"].append(f"'{sdmx_code}'")
+    code_comments_dict["comments"].append(comments)
+    
+
+match_values_df = pd.DataFrame.from_dict(code_comments_dict).set_index("index_code")
+match_values_df.rename(columns={"index_code":"index"}, inplace=True)
+
+val_col_pairs_df.drop(['sdmx_code', 'comments'], axis=1, inplace=True)
+val_col_pairs_df = val_col_pairs_df.join(match_values_df)
+
+print(val_col_pairs_df.sample(20))
+
+val_col_pairs_df.to_excel("manually_chosen_values.xlsx")
+val_col_pairs_df.to_csv("testing_matching.csv", quotechar="'")
