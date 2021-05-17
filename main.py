@@ -375,7 +375,6 @@ val_col_pairs_df.to_csv("SDMX_colnames_values_matched-#21.csv")
 
 # Import DSD
 dsd_xls = pd.ExcelFile(config['dsd_url'])
-col_name = "Age"
 
 concept_sch = pd.read_excel(dsd_xls, engine="openpyxl", sheet_name="3.Concept Scheme", skiprows=11, header=0, usecols=[2,7])
 
@@ -405,18 +404,24 @@ def get_dsd_tab_name(concept_sch, concept_name):
 #             val_col_pairs_df[val_col_pairs_df.column_value == val_name].loc[:,'sdmx_code'] = process.extract(val_name, dsd_codelist, limit=1)[0][0]
 #             val_col_pairs_df[val_col_pairs_df.column_value == val_name].loc[:,'comments'] = "-----Suggested-------"
 
-dsd_code_list_dict = {}
+dsd_code_name_list_dict = {}
 for col_name in val_col_pairs_df.loc[:,'column_name'].unique():
     tab_name = get_dsd_tab_name(concept_sch, col_name)
     if not tab_name:
+        print("Warning: No tab name was found")
         continue
-    dsd_codelist = pd.read_excel(dsd_xls, 
+    # Get the SDMX data from the correct tab in the spreadsheet.
+    dsd_from_tab = pd.read_excel(dsd_xls, 
                     engine="openpyxl",
                     sheet_name=f"{tab_name.upper()}",
                     skiprows=12,
                     header=0,
-                    usecols=[4]).iloc[:,0].to_list()
-    dsd_code_list_dict[col_name] = dsd_codelist
+                    usecols=[0,4])
+    # Column 0 is the SDMX code, 1 is the SDMX name (more human friendly)
+    names = dsd_from_tab.iloc[:,1].to_list()
+    codes = dsd_from_tab.iloc[:,0].to_list()
+    # Put the SDMX codes and names into a dictionary for user choosing later. 
+    dsd_code_name_list_dict[col_name] = {name:code for name,code in zip(names,codes)}
 
 def valid_int_input(prompt, highest_input):
     while True:
@@ -474,8 +479,8 @@ Or press {} if there is no suitable match:  """
 #             return "None", "No matches were manually chosen for {sdg_column_value}"
 #     return "None", f"Automatic. No matches were found for {sdg_column_value}"
 
-def get_code_list(column_name, dsd_code_list_dict=dsd_code_list_dict):
-    return dsd_code_list_dict[column_name]
+def get_name_list(column_name, dsd_code_list_dict=dsd_code_name_list_dict):
+    return dsd_code_list_dict[column_name].keys()
 
 def suggest_dsd_value(column_name: str, sdg_column_value: str, dsd_code_list_dict: dict):
     """This is the iterrows solution
@@ -489,7 +494,7 @@ def suggest_dsd_value(column_name: str, sdg_column_value: str, dsd_code_list_dic
         [type]: [description]
     """
 
-    dsd_code_list = get_code_list(column_name, dsd_code_list_dict)
+    dsd_code_list = get_name_list(column_name, dsd_code_list_dict)
     possible_matches = process.extract(sdg_column_value, 
                                         dsd_code_list, 
                                         scorer=fuzz.partial_token_sort_ratio, limit=8)
@@ -497,33 +502,46 @@ def suggest_dsd_value(column_name: str, sdg_column_value: str, dsd_code_list_dic
         count_matches = len(possible_matches)
         # get the index/position of the last option in the list, for None
         last_option_index = count_matches+1
-        for i, match in enumerate(possible_matches):
-            print(f"{i+1}: {match[0]} : {match[1]}%")
+        # Present the match options to the user
+        for option_index, match in enumerate(possible_matches):
+            print(f"{option_index+1}: {match[0]} : {match[1]}%")
         print(f"{count_matches+1}: None")
+        # Get user input to choose the best match from the options
         prompt = input_prompt.format(sdg_column_value, last_option_index)
-        choose_match = valid_int_input(prompt, highest_input=last_option_index)-1
-        # choose_match = randrange(-2, 11)
-        if choose_match < count_matches:
-            return possible_matches[choose_match][0], "Matching SDG value was manually chosen"
-        elif choose_match == count_matches: # This should catch option 9
+        user_match_choice = valid_int_input(prompt, highest_input=last_option_index)-1
+        if user_match_choice < count_matches:
+            selected_match = possible_matches[user_match_choice][0]
+            print(f"\nChosen value: {selected_match}\n")
+            sleep(0.5)
+            sdmx_code_ = dsd_code_list_dict[column_name][selected_match]
+            return sdmx_code_, "Matching SDG value was manually chosen"
+        elif user_match_choice == count_matches: # This should catch the "None" option, usually 9
             return "None", f"No matches were manually chosen for {sdg_column_value}"
         else:
             print("There has been some exceptional error")
     return "None", f"Automatic. No matches were found for {sdg_column_value}"
 
 
-# Create new `pandas` methods which use `tqdm` progress
-# tqdm.pandas(desc="Progress so far")
 
+
+# ticket #46 function to map "Name:en" to "Code*"
+
+def name_to_code_mapper(name, column_name, dsd_name_code_dict):
+    """ Returns the value in the 'Code*' coumn of the SDMX DSD spreadsheet"""
+    return dsd_name_code_dict[column_name][name]
+
+
+
+#Setting up a dictionary to ready for the construction of the dataframe for output
 code_comments_dict = {"index_code":[],"sdmx_code":[],"comments":[]}
 
 all_records = val_col_pairs_df.shape[0]
 for i, row in enumerate(val_col_pairs_df.iterrows()):
     print(f"Progress: {(i/all_records)*100:.2f}%")
     index_number = row[0] 
-    sdmx_code, comments = suggest_dsd_value(row[1].column_name, row[1].column_value, dsd_code_list_dict)
-    print(f"\nChosen value: {sdmx_code}\n")
-    sleep(1)
+    sdmx_code, comments = suggest_dsd_value(row[1].column_name, row[1].column_value, dsd_code_name_list_dict)
+    print(f"\nCorresponding code: {sdmx_code}\n")
+    sleep(0.5)
     code_comments_dict["index_code"].append(index_number)
     code_comments_dict["sdmx_code"].append(f"'{sdmx_code}'")
     code_comments_dict["comments"].append(comments)
@@ -539,3 +557,6 @@ print(val_col_pairs_df.sample(20))
 
 val_col_pairs_df.to_excel("manually_chosen_values.xlsx")
 val_col_pairs_df.to_csv("testing_matching.csv", quotechar="'")
+
+
+#ticket 45 Correct the formatting of Column Mapping
