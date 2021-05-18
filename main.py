@@ -592,7 +592,7 @@ code_mapping_44_df.rename(columns={'sdmx_code':"Value",'column_name':'Text'}, in
 # Reorder the columns as required in ticket 44.
 ORDER_44 = ['Text', 'Dimension', 'Value']
 code_mapping_44_df = code_mapping_44_df[ORDER_44]
-# Write out to csv
+# Write out to csv 
 code_mapping_44_df.to_csv("code_mapping_44.csv")
 
 
