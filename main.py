@@ -575,6 +575,9 @@ print(val_col_pairs_df.sample(20))
 val_col_pairs_df.to_excel("manually_chosen_values.xlsx")
 val_col_pairs_df.to_csv("testing_matching.csv", quotechar="'")
 
+# Ticket 44 Code Mapping in correct format
+
+
 # Ticket 45 
 column_mapping_45_df = manual_excel(EXCEL_FILE, WANTED_COLS)
 column_mapping_45_df.dropna(subset=["SDMX_Concept_ID"], inplace=True)
