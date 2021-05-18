@@ -29,6 +29,7 @@ def keep_needed_df_cols(df: pd.DataFrame, required_col_list: list):
     df = df[required_col_list]
     return df
 
+
 # dropping uneeded cols
 required_cols = config['required_cols']
 meta_data_df = keep_needed_df_cols(meta_data_df, required_cols)
@@ -575,10 +576,28 @@ print(val_col_pairs_df.sample(20))
 val_col_pairs_df.to_excel("manually_chosen_values.xlsx")
 val_col_pairs_df.to_csv("testing_matching.csv", quotechar="'")
 
-# Ticket 44 Code Mapping in correct format
+# Ticket 44 Code Mapping in correct format - 
+# https://github.com/ONSdigital/sdg-SDMX-data-qualifier/issues/44
+WANTED_COLS_44 = ["column_name","sdmx_code"]
+code_mapping_44_df = manual_excel("manually_chosen_values_corrected.xlsx", WANTED_COLS_44)
+# The concept names need mapping to the concept IDs. This comes from the DSD
+# Import the needed columns from the DSD for the name-->ID mapping
+concept_id_names_df = pd.read_excel(dsd_xls, engine="openpyxl", sheet_name="3.Concept Scheme", skiprows=11, header=0, usecols=[1,7])
+# Get a dictionary for the name-->ID mapping, with this slightly hacky code
+concept_id_names_df.rename(columns={'Concept Name:en':"concept_name",'Concept ID':'concept_id'}, inplace=True)
+concept_id_names_mapping_dict = concept_id_names_df.set_index("concept_name").to_dict()['concept_id']
+# Create the Dimension column as required in ticket 44
+code_mapping_44_df['Dimension'] = code_mapping_44_df.column_name.map(concept_id_names_mapping_dict)
+code_mapping_44_df.rename(columns={'sdmx_code':"Value",'column_name':'Text'}, inplace=True)
+# Reorder the columns as required in ticket 44.
+ORDER_44 = ['Text', 'Dimension', 'Value']
+code_mapping_44_df = code_mapping_44_df[ORDER_44]
+# Write out to csv
+code_mapping_44_df.to_csv("code_mapping_44.csv")
 
 
-# Ticket 45 
+# Ticket 45 Column Mapping in correct format - 
+# https://github.com/ONSdigital/sdg-SDMX-data-qualifier/issues/45
 column_mapping_45_df = manual_excel(EXCEL_FILE, WANTED_COLS)
 column_mapping_45_df.dropna(subset=["SDMX_Concept_ID"], inplace=True)
 column_mapping_45_df.rename(columns={"sdg_column_name":"Text", "SDMX_Concept_ID":"Value"}, inplace=True)
