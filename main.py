@@ -448,40 +448,6 @@ Choose a number from above options to select best matching SDMX value.
 Or press {} if there is no suitable match:  """
 
     
-# def find_suggested_dsd_value(column_name, sdg_column_value, dsd_code_list_dict):
-#     """[summary]
-
-#     Args:
-#         column_name ([type]): [description]
-#         sdg_column_value ([type]): [description]
-#         dsd_code_list_dict ([type]): [description]
-
-#     Returns:
-#         [type]: [description]
-#     """
-#     # Gets the correct codelist for the column name  
-#     dsd_code_list = dsd_code_list_dict[column_name]
-#     # Checks for sub-string matches 
-#     sub_string_matches = [dsdcode for dsdcode in dsd_code_list if sdg_column_value in dsdcode]
-#     if any(sub_string_matches):
-#         return sub_string_matches[0], "Automatically matched based on sub-string match"
-#     possible_matches = process.extract(sdg_column_value, 
-#                                         dsd_code_list, 
-#                                         scorer=fuzz.partial_token_sort_ratio, limit=8)
-#     if any(possible_matches):
-#         count_matches = len(possible_matches)
-#         last_option_index = count_matches+1
-#         for i, match in enumerate(possible_matches):
-#             print(f"{i+1}: {match[0]} : {match[1]}%")
-#         print(f"{count_matches+1}: None")
-#         prompt = input_prompt.format(sdg_column_value, last_option_index)
-#         choose_match = valid_int_input(prompt, highest_input=last_option_index)
-#         if choose_match !=count_matches+1:
-#             return possible_matches[choose_match][0], "Matching SDG value was manually chosen"
-#         else:
-#             return "None", "No matches were manually chosen for {sdg_column_value}"
-#     return "None", f"Automatic. No matches were found for {sdg_column_value}"
-
 for col_name,manual_values_df in manual_values_df.groupby("column_name"):
     for value in manual_values_df.sdmx_code.unique():
         dsd_code_name_list_dict[col_name][value]
@@ -578,20 +544,37 @@ val_col_pairs_df.to_csv("testing_matching.csv", quotechar="'")
 
 # Ticket 44 Code Mapping in correct format - 
 # https://github.com/ONSdigital/sdg-SDMX-data-qualifier/issues/44
-WANTED_COLS_44 = ["column_name","sdmx_code"]
+WANTED_COLS_44 = ["column_value","sdmx_code"]
 code_mapping_44_df = manual_excel("manually_chosen_values_corrected.xlsx", WANTED_COLS_44)
 # The concept names need mapping to the concept IDs. This comes from the DSD
 # Import the needed columns from the DSD for the name-->ID mapping
-concept_id_names_df = pd.read_excel(dsd_xls, engine="openpyxl", sheet_name="3.Concept Scheme", skiprows=11, header=0, usecols=[1,7])
+concept_id_names_df = pd.read_excel(dsd_xls,
+                                    engine="openpyxl",
+                                    sheet_name="3.Concept Scheme",
+                                    skiprows=11,
+                                    header=0,
+                                    usecols=[1,7])
 # Get a dictionary for the name-->ID mapping, with this slightly hacky code
-concept_id_names_df.rename(columns={'Concept Name:en':"concept_name",'Concept ID':'concept_id'}, inplace=True)
-concept_id_names_mapping_dict = concept_id_names_df.set_index("concept_name").to_dict()['concept_id']
+concept_id_names_df.rename(columns={'Concept Name:en':"concept_name",
+                                    'Concept ID':'concept_id'},
+                                    inplace=True)
+concept_id_names_mapping_dict = (concept_id_names_df
+                                 .set_index("concept_name")
+                                 .to_dict()['concept_id'])
 # Create the Dimension column as required in ticket 44
-code_mapping_44_df['Dimension'] = code_mapping_44_df.column_name.map(concept_id_names_mapping_dict)
-code_mapping_44_df.rename(columns={'sdmx_code':"Value",'column_name':'Text'}, inplace=True)
+code_mapping_44_df['Dimension'] = (code_mapping_44_df
+                                   .column_name
+                                   .map(concept_id_names_mapping_dict))
+# column_name was only needed for mapping - dropping it now
+code_mapping_44_df.drop("column_name", axis=1, inplace=True)
+code_mapping_44_df.rename(columns={'sdmx_code':"Value",
+                                   'column_value':'Text'}, 
+                                   inplace=True)
 # Reorder the columns as required in ticket 44.
 ORDER_44 = ['Text', 'Dimension', 'Value']
 code_mapping_44_df = code_mapping_44_df[ORDER_44]
+# Drop empty rows
+code_mapping_44_df.dropna(subset="Value")
 # Write out to csv 
 code_mapping_44_df.to_csv("code_mapping_44.csv")
 
