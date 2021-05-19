@@ -5,9 +5,9 @@ import os
 import re
 from functools import cache
 from fuzzywuzzy import process, fuzz
-from tqdm import tqdm
+
 from time import sleep
-from random import randrange
+
 
 # Load config
 config = yaml.safe_load(open('config.yml'))
@@ -28,6 +28,7 @@ def keep_needed_df_cols(df: pd.DataFrame, required_col_list: list):
     """    
     df = df[required_col_list]
     return df
+
 
 # dropping uneeded cols
 required_cols = config['required_cols']
@@ -280,7 +281,7 @@ def manual_excel(excel_file, wanted_cols, drop_cols=None):
                             engine="openpyxl")
         if drop_cols:
             df.dropna(axis=0, subset=drop_cols, inplace=True)
-        print("The manual-input Excel file has been imported.")
+        print(f"{excel_file} has been imported.")
         return df    
     except Exception as ex:
         print(f"""There has been an error with the import of the 
@@ -447,43 +448,8 @@ Choose a number from above options to select best matching SDMX value.
 Or press {} if there is no suitable match:  """
 
     
-# def find_suggested_dsd_value(column_name, sdg_column_value, dsd_code_list_dict):
-#     """[summary]
-
-#     Args:
-#         column_name ([type]): [description]
-#         sdg_column_value ([type]): [description]
-#         dsd_code_list_dict ([type]): [description]
-
-#     Returns:
-#         [type]: [description]
-#     """
-#     # Gets the correct codelist for the column name  
-#     dsd_code_list = dsd_code_list_dict[column_name]
-#     # Checks for sub-string matches 
-#     sub_string_matches = [dsdcode for dsdcode in dsd_code_list if sdg_column_value in dsdcode]
-#     if any(sub_string_matches):
-#         return sub_string_matches[0], "Automatically matched based on sub-string match"
-#     possible_matches = process.extract(sdg_column_value, 
-#                                         dsd_code_list, 
-#                                         scorer=fuzz.partial_token_sort_ratio, limit=8)
-#     if any(possible_matches):
-#         count_matches = len(possible_matches)
-#         last_option_index = count_matches+1
-#         for i, match in enumerate(possible_matches):
-#             print(f"{i+1}: {match[0]} : {match[1]}%")
-#         print(f"{count_matches+1}: None")
-#         prompt = input_prompt.format(sdg_column_value, last_option_index)
-#         choose_match = valid_int_input(prompt, highest_input=last_option_index)
-#         if choose_match !=count_matches+1:
-#             return possible_matches[choose_match][0], "Matching SDG value was manually chosen"
-#         else:
-#             return "None", "No matches were manually chosen for {sdg_column_value}"
-#     return "None", f"Automatic. No matches were found for {sdg_column_value}"
-
-for col_name,manual_values_df in manual_values_df.groupby("column_name"):
-    for value in manual_values_df.sdmx_code.unique():
-        dsd_code_name_list_dict[col_name][value]
+def get_name_list(column_name, dsd_code_list_dict=dsd_code_name_list_dict):
+    return dsd_code_list_dict[column_name].keys()
 
 def suggest_dsd_value(column_name: str, sdg_column_value: str, dsd_code_list_dict: dict):
     """This is the iterrows solution
@@ -526,6 +492,8 @@ def suggest_dsd_value(column_name: str, sdg_column_value: str, dsd_code_list_dic
 
 # ticket #46 function to map "Name:en" to "Code*"
 
+# Set map_manual_names_to_codes if you have a manually edited file that needs mapping from
+# SDMX names (English) to SDMX concept codes.
 map_manual_names_to_codes = False
 
 if map_manual_names_to_codes:
@@ -549,34 +517,76 @@ if map_manual_names_to_codes:
     # Write the corrected df out to Excel
     manual_values_df.to_excel("manually_chosen_values_corrected.xlsx")
 
-#Setting up a dictionary to ready for the construction of the dataframe for output
-code_comments_dict = {"index_code":[],"sdmx_code":[],"comments":[]}
+manually_choose_code_mapping = False
 
-all_records = val_col_pairs_df.shape[0]
-for i, row in enumerate(val_col_pairs_df.iterrows()):
-    print(f"Progress: {(i/all_records)*100:.2f}%")
-    index_number = row[0] 
-    sdmx_code, comments = suggest_dsd_value(row[1].column_name, row[1].column_value, dsd_code_name_list_dict)
-    print(f"\nCorresponding code: {sdmx_code}\n")
-    sleep(1)
-    code_comments_dict["index_code"].append(index_number)
-    code_comments_dict["sdmx_code"].append(f"'{sdmx_code}'")
-    code_comments_dict["comments"].append(comments)
- 
+if manually_choose_code_mapping:
+    #Setting up a dictionary to ready for the construction of the dataframe for output
+    code_comments_dict = {"index_code":[],"sdmx_code":[],"comments":[]}
 
-match_values_df = pd.DataFrame.from_dict(code_comments_dict).set_index("index_code")
-match_values_df.rename(columns={"index_code":"index"}, inplace=True)
+    all_records = val_col_pairs_df.shape[0]
+    for i, row in enumerate(val_col_pairs_df.iterrows()):
+        print(f"Progress: {(i/all_records)*100:.2f}%")
+        index_number = row[0] 
+        sdmx_code, comments = suggest_dsd_value(row[1].column_name, row[1].column_value, dsd_code_name_list_dict)
+        print(f"\nCorresponding code: {sdmx_code}\n")
+        sleep(1)
+        code_comments_dict["index_code"].append(index_number)
+        code_comments_dict["sdmx_code"].append(f"'{sdmx_code}'")
+        code_comments_dict["comments"].append(comments)
+    
 
-val_col_pairs_df.drop(['sdmx_code', 'comments'], axis=1, inplace=True)
-val_col_pairs_df = val_col_pairs_df.join(match_values_df)
+    match_values_df = pd.DataFrame.from_dict(code_comments_dict).set_index("index_code")
+    match_values_df.rename(columns={"index_code":"index"}, inplace=True)
 
-print(val_col_pairs_df.sample(20))
+    val_col_pairs_df.drop(['sdmx_code', 'comments'], axis=1, inplace=True)
+    val_col_pairs_df = val_col_pairs_df.join(match_values_df)
 
-val_col_pairs_df.to_excel("manually_chosen_values.xlsx")
-val_col_pairs_df.to_csv("testing_matching.csv", quotechar="'")
+    print(val_col_pairs_df.sample(20))
 
-# Ticket 45 
-column_mapping_45_df = manual_excel(EXCEL_FILE, WANTED_COLS)
-column_mapping_45_df.dropna(subset=["SDMX_Concept_ID"], inplace=True)
+    val_col_pairs_df.to_excel("manually_chosen_values.xlsx")
+    val_col_pairs_df.to_csv("manually_chosen_values", quotechar="'")
+
+# Ticket 44 Code Mapping in correct format - 
+# https://github.com/ONSdigital/sdg-SDMX-data-qualifier/issues/44
+WANTED_COLS_44 = ["column_value","column_name","sdmx_code"]
+code_mapping_44_df = manual_excel("manually_chosen_values_corrected.xlsx", WANTED_COLS_44)
+# The concept names need mapping to the concept IDs. This comes from the DSD
+# Import the needed columns from the DSD for the name-->ID mapping
+concept_id_names_df = pd.read_excel(dsd_xls,
+                                    engine="openpyxl",
+                                    sheet_name="3.Concept Scheme",
+                                    skiprows=11,
+                                    header=0,
+                                    usecols=[1,7])
+# Get a dictionary for the name-->ID mapping, with this slightly hacky code
+concept_id_names_df.rename(columns={'Concept Name:en':"concept_name",
+                                    'Concept ID':'concept_id'},
+                                    inplace=True)
+concept_id_names_mapping_dict = (concept_id_names_df
+                                 .set_index("concept_name")
+                                 .to_dict()['concept_id'])
+# Create the Dimension column as required in ticket 44
+code_mapping_44_df['Dimension'] = (code_mapping_44_df
+                                   .column_name
+                                   .map(concept_id_names_mapping_dict))
+# column_name was only needed for mapping - dropping it now
+code_mapping_44_df.drop("column_name", axis=1, inplace=True)
+code_mapping_44_df.rename(columns={'sdmx_code':"Value",
+                                   'column_value':'Text'}, 
+                                   inplace=True)
+# Reorder the columns as required in ticket 44.
+ORDER_44 = ['Text', 'Dimension', 'Value']
+code_mapping_44_df = code_mapping_44_df[ORDER_44]
+# Drop empty rows
+code_mapping_44_df.dropna(subset=["Value"], axis='index')
+# Write out to csv 
+code_mapping_44_df.to_csv("code_mapping_44.csv", sep="\t", index=False)
+
+
+# Ticket 45 Column Mapping in correct format - 
+# https://github.com/ONSdigital/sdg-SDMX-data-qualifier/issues/45
+WANTED_COLS_45 = ["sdg_column_name","SDMX_Concept_ID"]
+column_mapping_45_df = manual_excel(EXCEL_FILE, WANTED_COLS_45)
+column_mapping_45_df.dropna(subset=["SDMX_Concept_ID"], axis='index', inplace=True)
 column_mapping_45_df.rename(columns={"sdg_column_name":"Text", "SDMX_Concept_ID":"Value"}, inplace=True)
-column_mapping_45_df.to_csv("column_mapping_45.csv")
+column_mapping_45_df.to_csv("column_mapping_45.csv", sep="\t", index=False)
