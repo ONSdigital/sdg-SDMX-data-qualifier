@@ -5,9 +5,9 @@ import os
 import re
 from functools import cache
 from fuzzywuzzy import process, fuzz
-from tqdm import tqdm
+
 from time import sleep
-from random import randrange
+
 
 # Load config
 config = yaml.safe_load(open('config.yml'))
@@ -580,7 +580,7 @@ code_mapping_44_df = code_mapping_44_df[ORDER_44]
 # Drop empty rows
 code_mapping_44_df.dropna(subset=["Value"], axis='index')
 # Write out to csv 
-code_mapping_44_df.to_csv("code_mapping_44.csv")
+code_mapping_44_df.to_csv("code_mapping_44.csv", sep="\t", index=False)
 
 
 # Ticket 45 Column Mapping in correct format - 
@@ -589,4 +589,4 @@ WANTED_COLS_45 = ["sdg_column_name","SDMX_Concept_ID"]
 column_mapping_45_df = manual_excel(EXCEL_FILE, WANTED_COLS_45)
 column_mapping_45_df.dropna(subset=["SDMX_Concept_ID"], axis='index', inplace=True)
 column_mapping_45_df.rename(columns={"sdg_column_name":"Text", "SDMX_Concept_ID":"Value"}, inplace=True)
-column_mapping_45_df.to_csv("column_mapping_45.csv")
+column_mapping_45_df.to_csv("column_mapping_45.csv", sep="\t", index=False)
