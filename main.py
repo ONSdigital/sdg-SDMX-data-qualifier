@@ -20,7 +20,7 @@ VERBOSE = False
 
 
 def keep_needed_df_cols(df: pd.DataFrame, required_col_list: list):
-    """Drops uneeded columns from a datframe using a list of the 
+    """Drops uneeded columns from a datframe using a list of the
         required columns.
 
     Args:
@@ -49,11 +49,11 @@ def regex_or_str(termslist: list):
 
     Args:
         termslist (list): list of terms (strings) that should be joined
-            with the | operator. 
+            with the | operator.
 
     Returns:
         re.Pattern: the regex pattern in unicode
-    """    
+    """
     regex_terms = ''
     for item in termslist:
         if item == termslist[0]:
@@ -83,13 +83,13 @@ meta_data_df['proxy_indicator'] = proxy_boolean
 
 
 def check_if_proxies_contain_official():
-    """Checks if the records which contain the proxy key words in the 
-        other_info column also contain the official wording to say that 
-        the stats follow the UN specification, which would imply a 
+    """Checks if the records which contain the proxy key words in the
+        other_info column also contain the official wording to say that
+        the stats follow the UN specification, which would imply a
         contradiction."""
     official = "Data follows the UN specification for this indicator"
     # Isolate those records that contain the proxy keywords
-    proxies_df = meta_data_df[meta_data_df.proxy_indicator == True] 
+    proxies_df = meta_data_df[meta_data_df.proxy_indicator == True]
     # Make a boolean mask
     official_mask = (proxies_df[proxies_df.proxy_indicator]
                      .other_info
@@ -97,13 +97,13 @@ def check_if_proxies_contain_official():
     # Apply mask to proxies_df
     contradictions_list = proxies_df[official_mask].index.to_list()
     for index_num in contradictions_list:
-        print(f"""There seem to be contradictory 
+        print(f"""There seem to be contradictory
               statements in other_info in indicator {index_num}""")
     return contradictions_list
 
 
 # quality check
-# Make a check: none of proxy_indicator = True 
+# Make a check: none of proxy_indicator = True
 # should contain this official sentence
 check_if_proxies_contain_official()
 
@@ -117,7 +117,7 @@ meta_data_df = meta_data_df[~meta_data_df.index.str.contains("archived")]
 
 
 def get_disag_report(disag_url):
-    """Gets the disagregation report from the URL specified in the 
+    """Gets the disagregation report from the URL specified in the
         config file then it changes the indicator names so they are
         the same as metadata df"""
     # Pulling disagg report
@@ -143,7 +143,7 @@ disag_boolean = (disag_df
 if VERBOSE:
     print(disag_boolean.value_counts())
 
-disag_df['geo_disag'] = disag_boolean   
+disag_df['geo_disag'] = disag_boolean
 
 csv_nm = os.path.join(os.getcwd(), config["disag_outfile"])
 
@@ -156,19 +156,19 @@ disag_df.set_index("Indicator", inplace=True)
 # Left joining df onto disag_df
 meta_data_df = meta_data_df.join(disag_df)
 
-# Replacing nans with False in the geo_disag series 
+# Replacing nans with False in the geo_disag series
 meta_data_df.geo_disag.replace(np.nan, False, inplace=True)
 
 # creating local variable to map for uk coverage
-uk_terms_list = config['uk_terms'] 
+uk_terms_list = config['uk_terms']
 
 
 def check_only_uk_data(nat_geo_series, geo_disag_series, uk_terms):
     """Checks if Both of these conditions need to met
-        1) value in the national_geographical_coverage is listed in uk_terms 
+        1) value in the national_geographical_coverage is listed in uk_terms
         2) value in geo_disag column is FALSE
-        and returns True if conditions are met, False otherwise. 
-        Function to be used to map/apply to create new series 
+        and returns True if conditions are met, False otherwise.
+        Function to be used to map/apply to create new series
     Args:
         nat_geo_series (pd.Series): The national_geographical_coverage series
         geo_disag_series (pd.Series): The geo_disag series
@@ -201,11 +201,11 @@ meta_data_df.national_geographical_coverage = (meta_data_df
 meta_data_df.loc['8-1-1', 'proxy_indicator'] = False
 
 
-# ticket #29    
+# ticket #29
 def df_sorter(df: pd.DataFrame, sort_order: list) -> pd.DataFrame:
     """Sorts a dataframe which has indicators as strigns, such as
         '1-2-1', then it sorts them according to the hierache in the
-        config file. 
+        config file.
         Goal: numeric
             then by
         Target: numeric then alphabetic
@@ -220,7 +220,7 @@ def df_sorter(df: pd.DataFrame, sort_order: list) -> pd.DataFrame:
 
     Returns:
         pd.DataFrame: a pandas dataframe sorted as required.
-    """   
+    """
     df.reset_index(inplace=True)
     df.rename(columns={"index": "g-t-i"}, inplace=True)
     # goal_targ_ind = df["g-t-i"].str.split("-", expand=True)
@@ -250,15 +250,15 @@ def build_query(query_words: dict) -> str:
     """
     Builds an SQL style query string from a dictionary
         where keys are column titles and values are values
-        that the query will test for. 
-        
+        that the query will test for.
+
     Args:
-        query_words (dict): a dictionary where keys are column 
+        query_words (dict): a dictionary where keys are column
             titles and values are values
 
     Returns:
         str: an string that can be used as an SQL query
-    """    
+    """
     query_string = ''
     for col_nm, col_val in query_words.items():
         if col_val not in [True, False]:
@@ -275,7 +275,7 @@ print("Querying meta_data_df for ", query_string)
 inc_df = meta_data_df.query(query_string)
 
 # Manually dropping '13-2-2', '17-5-1', '17-6-1' from df because
-# they have been changed into the 2020 indicators, so we do not want to 
+# they have been changed into the 2020 indicators, so we do not want to
 # consider them for SDMX at this point
 inc_df = inc_df.drop(config["2020indicators"], axis=0)
 
@@ -312,27 +312,27 @@ DROP_COLS = ["SDMX_concept_name"]
 
 def manual_excel(excel_file, wanted_cols, drop_cols=None):
     try:
-        df = pd.read_excel(excel_file, 
+        df = pd.read_excel(excel_file,
                            usecols=wanted_cols,
                            engine="openpyxl")
         if drop_cols:
             df.dropna(axis=0, subset=drop_cols, inplace=True)
         print(f"{excel_file} has been imported.")
-        return df    
+        return df
     except Exception as ex:
-        print(f"""There has been an error with the import of the 
-                    manually updated Excel file \n Check that the 
-                    dependecies (openpyxl) are installed and that 
+        print(f"""There has been an error with the import of the
+                    manually updated Excel file \n Check that the
+                    dependecies (openpyxl) are installed and that
                     the file is named correctly in config
-                    \n\n 
+                    \n\n
                     Error Message: {ex}""")
 
 
-# Make a df of the cols         
+# Make a df of the cols
 mapped_columns_df = manual_excel(EXCEL_FILE, WANTED_COLS, DROP_COLS)
 
 # Ticket 20  - Get all disagregation values and match them with their
-# respective column titles. Output as a df and csv  
+# respective column titles. Output as a df and csv
 URL_prefix = "https://sdgdata.gov.uk/sdg-data/values--disaggregation--"
 URL_suffix = ".csv"
 col_name_slugs = (mapped_columns_df
@@ -349,7 +349,7 @@ col_values = []
 col_series = mapped_columns_df.sdg_column_name
 value_urls = mapped_columns_df.disag_val_urls
 for col_name, url in zip(col_series, value_urls):
-    # Get all the value disaggregations for each column 
+    # Get all the value disaggregations for each column
     values = pd.read_csv(url, usecols=["Value"]).to_numpy()
     for value in values:
         col_names.append(col_name)
@@ -372,19 +372,19 @@ val_col_pairs_df.to_csv("val_col_pairs-#20.csv")
 @cache  # Caching provides a 20x speed-up here
 def get_SDMX_colnm(search_value):
     # TODO: merge this with the pd_vlookup function
-    """Gets the SDMX equivilent of all of the SDG column names, 
-        by looking up the SDG column name. To be used on a the 
+    """Gets the SDMX equivilent of all of the SDG column names,
+        by looking up the SDG column name. To be used on a the
         sdg_column_name column of the dataframe containing the
         SDG column names. It looks up the values sdg_column_name
         column and returns their equivilent from SDMX_concept_name
         column of `mapped_columns_df` which came from the
-        manual-input Excel file.      
-        
+        manual-input Excel file.
+
     Args:
-        search_value (str): strings from the sdg_column_name column 
+        search_value (str): strings from the sdg_column_name column
 
     Returns:
-        str: SDMX concept name equivilent 
+        str: SDMX concept name equivilent
     """
     val_df = (mapped_columns_df[mapped_columns_df
                                 .sdg_column_name == search_value])
@@ -448,7 +448,7 @@ def get_dsd_tab_name(concept_sch, concept_name):
     else:
         print(f"Skipping {concept_name}; not found in the concept scheme")
         return None
-    
+
 
 dsd_code_name_list_dict = {}
 for col_name in val_col_pairs_df.loc[:, 'column_name'].unique():
@@ -457,7 +457,7 @@ for col_name in val_col_pairs_df.loc[:, 'column_name'].unique():
         print(f"Warning: No tab name for {col_name} was found")
         continue
     # Get the SDMX data from the correct tab in the spreadsheet.
-    dsd_from_tab = pd.read_excel(dsd_xls, 
+    dsd_from_tab = pd.read_excel(dsd_xls,
                                  engine="openpyxl",
                                  sheet_name=f"{tab_name.upper()}",
                                  skiprows=12,
@@ -466,7 +466,7 @@ for col_name in val_col_pairs_df.loc[:, 'column_name'].unique():
     # Column 0 is the SDMX code, 1 is the SDMX name (more human friendly)
     names = dsd_from_tab.iloc[:, 1].to_list()
     codes = dsd_from_tab.iloc[:, 0].to_list()
-    # Put the SDMX codes and names into a dictionary for user choosing later. 
+    # Put the SDMX codes and names into a dictionary for user choosing later.
     dsd_code_name_list_dict[col_name] = {name: code for name, code
                                          in zip(names, codes)}
 
@@ -489,12 +489,12 @@ def valid_int_input(prompt, highest_input):
             print(e)
 
 
-input_prompt = """\n The SDG value to be matched is 
+input_prompt = """\n The SDG value to be matched is
     '{}'
-Choose a number from above options to select best matching SDMX value. 
+Choose a number from above options to select best matching SDMX value.
 Or press {} if there is no suitable match:  """
 
-    
+
 def get_name_list(column_name, dsd_code_list_dict=dsd_code_name_list_dict):
     return dsd_code_list_dict[column_name].keys()
 
@@ -545,7 +545,7 @@ def suggest_dsd_value(column_name: str, sdg_column_value: str,
 
 
 # ticket #46 function to map "Name:en" to "Code*"
-# Set map_manual_names_to_codes if you have a manually edited file 
+# Set map_manual_names_to_codes if you have a manually edited file
 # that needs mapping from SDMX names (English) to SDMX concept codes.
 map_manual_names_to_codes = False
 
@@ -574,14 +574,14 @@ if map_manual_names_to_codes:
 manually_choose_code_mapping = False
 
 if manually_choose_code_mapping:
-    # Setting up a dictionary to ready for the construction of the 
+    # Setting up a dictionary to ready for the construction of the
     # dataframe for output
     code_comments_dict = {"index_code": [], "sdmx_code": [], "comments": []}
 
     all_records = val_col_pairs_df.shape[0]
     for i, row in enumerate(val_col_pairs_df.iterrows()):
         print(f"Progress: {(i/all_records)*100:.2f}%")
-        index_number = row[0] 
+        index_number = row[0]
         sdmx_code, comments = (suggest_dsd_value
                                (row[1].column_name,
                                 row[1].column_value,
@@ -591,11 +591,11 @@ if manually_choose_code_mapping:
         code_comments_dict["index_code"].append(index_number)
         code_comments_dict["sdmx_code"].append(f"'{sdmx_code}'")
         code_comments_dict["comments"].append(comments)
-    
+
     match_values_df = (pd.DataFrame
                        .from_dict(code_comments_dict)
                        .set_index("index_code"))
-    
+
     match_values_df.rename(columns={"index_code": "index"}, inplace=True)
 
     val_col_pairs_df.drop(['sdmx_code', 'comments'], axis=1, inplace=True)
@@ -607,7 +607,7 @@ if manually_choose_code_mapping:
     val_col_pairs_df.to_csv("manually_chosen_values", quotechar="'")
 
 
-# Ticket 44 Code Mapping in correct format - 
+# Ticket 44 Code Mapping in correct format -
 # https://github.com/ONSdigital/sdg-SDMX-data-qualifier/issues/44
 WANTED_COLS_44 = ["column_value", "column_name", "sdmx_code"]
 code_mapping_44_df = (manual_excel
@@ -643,11 +643,11 @@ ORDER_44 = ['Text', 'Dimension', 'Value']
 code_mapping_44_df = code_mapping_44_df[ORDER_44]
 # Drop empty rows
 code_mapping_44_df.dropna(subset=["Value", "Text"], axis='index', inplace=True)
-# Write out to csv 
+# Write out to csv
 code_mapping_44_df.to_csv("code_mapping_44.csv", sep="\t", index=False)
 
 
-# Ticket 45 Column Mapping in correct format - 
+# Ticket 45 Column Mapping in correct format -
 # https://github.com/ONSdigital/sdg-SDMX-data-qualifier/issues/45
 WANTED_COLS_45 = ["sdg_column_name", "SDMX_Concept_ID"]
 column_mapping_45_df = manual_excel(EXCEL_FILE, WANTED_COLS_45)
