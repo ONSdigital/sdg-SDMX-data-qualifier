@@ -1,0 +1,13 @@
+Text	Value
+Income group	INCOME_WEALTH_QUANTILE
+Age	AGE
+Sex	SEX
+Institution	IO
+Recipient region	REF_AREA
+Recipient country	REF_AREA
+Material category	PRODUCT
+Economic activity	ACTIVITY
+Urban or Rural	URBANISATION
+Industry sector	ACTIVITY
+Industry higher sub-category	ACTIVITY
+Manufacturing industry	ACTIVITY

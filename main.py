@@ -19,6 +19,14 @@ meta_data_df = pd.read_json(meta_url, orient='index')
 VERBOSE = False
 
 
+def in_path(file_name):
+    return os.path.join("inputs", file_name)
+
+
+def out_path(file_name):
+    return os.path.join("outputs", file_name)
+
+
 def keep_needed_df_cols(df: pd.DataFrame, required_col_list: list):
     """Drops uneeded columns from a datframe using a list of the
         required columns.
@@ -145,7 +153,7 @@ if VERBOSE:
 
 disag_df['geo_disag'] = disag_boolean
 
-csv_nm = os.path.join(os.getcwd(), config["disag_outfile"])
+meta_data_out_path = os.path.join(os.getcwd(), config["disag_outfile"])
 
 # Drop the now uneeded Disaggregations cols
 required_disag_cols = config["required_disag_cols"]
@@ -237,10 +245,12 @@ meta_data_df = df_sorter(meta_data_df, sort_order)
 print("========================Printing df")
 print(meta_data_df.head(20))
 
-# Get output filename from config
-csv_nm = os.path.join(os.getcwd(), config['meta_outfile'])
-# write out to csv
-meta_data_df.to_csv(csv_nm)
+intermediate_outputs = config['intermediate_outputs_needed']
+if intermediate_outputs:
+    # Get output filename from config to create path
+    meta_data_out_path = out_path(config['meta_outfile'])
+    # write out to csv
+    meta_data_df.to_csv(meta_data_out_path)
 
 # Get SDMX suitability test
 suitability_dict = config['suitability_test']
@@ -254,7 +264,7 @@ def build_query(query_words: dict) -> str:
 
     Args:
         query_words (dict): a dictionary where keys are column
-        
+
             titles and values are values
 
     Returns:
@@ -297,25 +307,21 @@ unique_disags = split_disags.explode().unique()
 df_build_dict = {
     "sdg_column_name": unique_disags,
     "SDMX_concept_name": np.empty_like(unique_disags)
-    }
+}
 
 # write out the csv
-pd.DataFrame(data=df_build_dict).to_csv(config["sdg_cols_outfile"])
+intermediate_outputs = config['intermediate_outputs_needed']
+if intermediate_outputs:
+    sdg_cols_out_path = out_path(config["sdg_cols_outfile"])
+    pd.DataFrame(data=df_build_dict).to_csv(sdg_cols_out_path)
 
 # Ticket #19
 # The excel file should have been manually updated with mappings
 # from SDG column names to their SDMX concept name mapping
 # Import the manually updated file
-EXCEL_FILE = config["manual_excel_file_name"]
+SDG_SDMX_MANUAL_EXCEL_FILE = config["manual_excel_file_name"]
 WANTED_COLS = ["sdg_column_name", "SDMX_concept_name"]
 DROP_COLS = ["SDMX_concept_name"]
-
-def in_path(file_name):
-    return os.path.join("inputs", file_name)
-
-
-def out_path(file_name):
-    return os.path.join("outputs", file_name)
 
 
 def manual_excel(excel_file, wanted_cols, drop_cols=None):
@@ -338,7 +344,9 @@ def manual_excel(excel_file, wanted_cols, drop_cols=None):
 
 
 # Make a df of the cols
-mapped_columns_df = manual_excel(EXCEL_FILE, WANTED_COLS, DROP_COLS)
+mapped_columns_df = manual_excel(SDG_SDMX_MANUAL_EXCEL_FILE,
+                                 WANTED_COLS,
+                                 DROP_COLS)
 
 # Ticket 20  - Get all disagregation values and match them with their
 # respective column titles. Output as a df and csv
@@ -373,14 +381,17 @@ construct_dict = {"column_value": col_values,
 val_col_pairs_df = pd.DataFrame(construct_dict)
 
 # Output for #20
-val_col_pairs_df.to_csv("val_col_pairs-#20.csv")
+intermediate_outputs = config['intermediate_outputs_needed']
+if intermediate_outputs:
+    val_col_pairs_df.to_csv("val_col_pairs-#20.csv")
 
 # Ticket 21 Swap SDG_column_names col for SDMX_column_name in
 # sdg_col_names_vals_df
 
+
 @cache  # Caching provides a 20x speed-up here
 def get_SDMX_colnm(search_value):
-    # TODO: merge this with the pd_vlookup function
+    # TODO: create a more generic v_lookup type function
     """Gets the SDMX equivilent of all of the SDG column names,
         by looking up the SDG column name. To be used on a the
         sdg_column_name column of the dataframe containing the
@@ -399,14 +410,6 @@ def get_SDMX_colnm(search_value):
                                 .sdg_column_name == search_value])
     row = val_df.index[0]
     val = val_df.loc[:].at[row, "SDMX_concept_name"]
-    return val
-
-
-def pd_vlookup(search_value, search_df, search_series_nm, return_series_nm):
-    """A more generic version of the get_SDMX_colnm function"""
-    val_df = search_df[search_series_nm == search_value]
-    row = val_df.index[0]
-    val = val_df.loc[:].at[row, return_series_nm]
     return val
 
 
@@ -436,10 +439,12 @@ print(f"""De-depuping finished.
       {before_shape[0] - after_shape[0]} records were dropped.""", end="")
 
 # Outputting result to csv
-val_col_pairs_df.to_csv("SDMX_colnames_values_matched-#21.csv")
+intermediate_outputs = config['intermediate_outputs_needed']
+if intermediate_outputs:
+    val_col_pairs_df.to_csv("SDMX_colnames_values_matched-#21.csv")
 
 # Import DSD
-dsd_xls = pd.ExcelFile(in_path(config['dsd_url']))
+dsd_xls = pd.ExcelFile(config['dsd_url'])
 
 concept_sch = (pd.read_excel(dsd_xls,
                              engine="openpyxl",
@@ -465,9 +470,8 @@ for col_name in val_col_pairs_df.loc[:, 'column_name'].unique():
     if not tab_name:
         print(f"Warning: No tab name for {col_name} was found")
         continue
-    # Get the SDMX data from the correct tab in the spreadsheet. 
-    dsd_path = in_path(dsd_xls)
-    dsd_from_tab = pd.read_excel(dsd_path,
+    # Get the SDMX data from the correct tab in the spreadsheet.
+    dsd_from_tab = pd.read_excel(dsd_xls,
                                  engine="openpyxl",
                                  sheet_name=f"{tab_name.upper()}",
                                  skiprows=12,
@@ -559,10 +563,7 @@ def suggest_dsd_value(column_name: str, sdg_column_value: str,
 # that needs mapping from SDMX names (English) to SDMX concept codes.
 
 
-map_manual_names_to_codes = False
-
-if map_manual_names_to_codes:
-    manually_choose_code_mapping = False
+manually_choose_code_mapping = False
 
 if manually_choose_code_mapping:
     # Setting up a dictionary to ready for the construction of the
@@ -598,7 +599,7 @@ if manually_choose_code_mapping:
     val_col_pairs_df.to_excel(manual_chosen_vals_out_path)
     manual_chosen_vals_out_path_csv = (out_path
                                        (config['manual_names_to_codes_csv']))
-    
+
     val_col_pairs_df.to_csv(manual_chosen_vals_out_path_csv, quotechar="'")
 
 
@@ -639,17 +640,22 @@ code_mapping_44_df = code_mapping_44_df[ORDER_44]
 # Drop empty rows
 code_mapping_44_df.dropna(subset=["Value", "Text"], axis='index', inplace=True)
 # Write out to csv
-code_mapping_44_df.to_csv("code_mapping_44.csv", sep="\t", index=False)
+code_mapp_out_path = out_path(config['code_mapping_out_file'])
+code_mapping_44_df.to_csv(code_mapp_out_path, sep="\t", index=False)
 
 
 # Ticket 45 Column Mapping in correct format -
 # https://github.com/ONSdigital/sdg-SDMX-data-qualifier/issues/45
 WANTED_COLS_45 = ["sdg_column_name", "SDMX_Concept_ID"]
-column_mapping_45_df = manual_excel(EXCEL_FILE, WANTED_COLS_45)
+# Using the EXCEL_FILE object which is the manual chosen mapping
+# for SDG column names to SDMX concepts
+column_mapping_45_df = manual_excel(SDG_SDMX_MANUAL_EXCEL_FILE,
+                                    WANTED_COLS_45)
 column_mapping_45_df.dropna(subset=["SDMX_Concept_ID"],
                             axis='index',
                             inplace=True)
 column_mapping_45_df.rename(columns={"sdg_column_name": "Text",
                                      "SDMX_Concept_ID": "Value"},
                             inplace=True)
-column_mapping_45_df.to_csv("column_mapping_45.csv", sep="\t", index=False)
+column_mapping_out_path = out_path(config['column_mapping_out_file'])
+column_mapping_45_df.to_csv(column_mapping_out_path, sep="\t", index=False)
