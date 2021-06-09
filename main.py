@@ -383,7 +383,8 @@ val_col_pairs_df = pd.DataFrame(construct_dict)
 # Output for #20
 intermediate_outputs = config['intermediate_outputs_needed']
 if intermediate_outputs:
-    val_col_pairs_df.to_csv("val_col_pairs-#20.csv")
+    val_col_pairs_path = out_path(config['val_col_file'])
+    val_col_pairs_df.to_csv(val_col_pairs_path)
 
 # Ticket 21 Swap SDG_column_names col for SDMX_column_name in
 # sdg_col_names_vals_df
