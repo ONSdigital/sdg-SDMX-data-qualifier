@@ -1,6 +1,4 @@
-UNDERSTand
-UK National Dataset Evaluater and Reshaping Standardiser
-# UK National Standardiser for Statistical Exchange Datasets (UN-StandStED)
+# UK National Standardiser for Statistical Exchange Datasets (UNDERSTand)
 
 ## What UNDERSTand does
 
