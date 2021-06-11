@@ -153,8 +153,6 @@ if VERBOSE:
 
 disag_df['geo_disag'] = disag_boolean
 
-meta_data_out_path = os.path.join(os.getcwd(), config["disag_outfile"])
-
 # Drop the now uneeded Disaggregations cols
 required_disag_cols = config["required_disag_cols"]
 disag_df = keep_needed_df_cols(disag_df, required_disag_cols)
