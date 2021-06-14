@@ -62,7 +62,7 @@ If any of these terms show up then a True will be placed in the geo_disag column
 - Streamline the logic of the suitability testing - e.g. the tests for the uk_only_data overlap with national_geographical_coverage.
 - Make the SDG disagregation name --> SDMX concept matching computer-assisted just as the SDG disaggregation values --> SDMX code ID matching is
 - Make the `check_only_uk_data` function more generic so it can check for multiple terms and apply logic to other columns - e.g. the search for `geo_disag_terms`, which is currently done with a `df.col_name.str.contains(geo_disag_terms)`. Making the `check_only_uk_data` function into a more generic function would also make the code more resuable for other OpenSDG users.
-- Improve the `check_if_proxies_contain_official` as this is a Quality Assurance to check if there were any contradictions. In the UK case there were a couple of contradictory indicators that were both listed as proxies but also contained the sentence in their descripton (8-1-1 and 6-2-1) and these were removed manually - perhaps this removal should be automatic.
+- Improve the `check_if_proxies_contain_official` as this is a useful Quality Assurance function to check if there were any contradictions between what is described as a proxie and what contains the . In the UK case there were a couple of contradictory indicators that were both listed as proxies but also contained the sentence in their descripton (8-1-1 and 6-2-1) and these were removed manually - perhaps this removal should be automatic.
 
 ## How to Install and run the script
 
