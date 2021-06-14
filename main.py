@@ -11,6 +11,8 @@ from time import sleep
 # Load config
 config = yaml.safe_load(open('config.yml'))
 
+VERBOSE = config['verbose']
+
 # reading all the meta data in from url
 meta_url = config['meta_url']
 meta_data_df = pd.read_json(meta_url, orient='index')
@@ -240,8 +242,9 @@ def df_sorter(df: pd.DataFrame, sort_order: list) -> pd.DataFrame:
 sort_order = config["sort_order"]
 meta_data_df = df_sorter(meta_data_df, sort_order)
 
-print("========================Printing df")
-print(meta_data_df.head(20))
+if VERBOSE:
+    print("========================Printing meta_data_df")
+    print(meta_data_df.head(20))
 
 intermediate_outputs = config['intermediate_outputs_needed']
 if intermediate_outputs:
@@ -484,7 +487,8 @@ for col_name in val_col_pairs_df.loc[:, 'column_name'].unique():
                                          in zip(names, codes)}
 
 
-def valid_int_input(prompt, highest_input):
+def _valid_int_input(prompt, highest_input):
+    "Validating input for the suggest_dsd_value function"
     while True:
         try:
             inp = int(input(prompt))
@@ -508,7 +512,10 @@ Choose a number from above options to select best matching SDMX value.
 Or press {} if there is no suitable match:  """
 
 
-def get_name_list(column_name, dsd_code_list_dict=dsd_code_name_list_dict):
+def _get_name_list(column_name, dsd_code_list_dict=dsd_code_name_list_dict):
+    """Created to simplify the suggest_dsd_value function.
+        Creates a list from the code name list dictionary's keys
+        for any particular column"""
     return dsd_code_list_dict[column_name].keys()
 
 
@@ -525,7 +532,7 @@ def suggest_dsd_value(column_name: str, sdg_column_value: str,
         [type]: [description]
     """
 
-    dsd_code_list = get_name_list(column_name, dsd_code_list_dict)
+    dsd_code_list = _get_name_list(column_name, dsd_code_list_dict)
     possible_matches = process.extract(sdg_column_value,
                                        dsd_code_list,
                                        scorer=fuzz.partial_token_sort_ratio,
@@ -540,7 +547,7 @@ def suggest_dsd_value(column_name: str, sdg_column_value: str,
         print(f"{count_matches+1}: None")
         # Get user input to choose the best match from the options
         prompt = input_prompt.format(sdg_column_value, last_option_index)
-        user_match_choice = (valid_int_input
+        user_match_choice = (_valid_int_input
                              (prompt,
                               highest_input=last_option_index)-1)
         if user_match_choice < count_matches:
@@ -609,8 +616,8 @@ code_mapping_44_df = (manual_excel
                       ("manually_chosen_values_corrected.xlsx",
                        WANTED_COLS_44))
 
-# The concept names need mapping to the concept IDs. This comes from the DSD
-# Import the needed columns from the DSD for the name-->ID mapping
+# The concept names need mapping to the concept IDs which come from the DSD
+# Import the needed columns from the DSD for the name --> concept ID mapping
 concept_id_names_df = pd.read_excel(dsd_xls,
                                     engine="openpyxl",
                                     sheet_name="3.Concept Scheme",

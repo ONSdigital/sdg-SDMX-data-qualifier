@@ -48,3 +48,4 @@ meta_outfile: meta_data.csv
 disag_outfile: disag.csv
 sdg_cols_outfile : SDG_column_names.csv
 intermediate_outputs_needed : false
+verbose : false
