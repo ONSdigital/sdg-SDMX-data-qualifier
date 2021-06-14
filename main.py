@@ -523,12 +523,21 @@ def _get_name_list(column_name, dsd_code_list_dict=dsd_code_name_list_dict):
 
 def suggest_dsd_value(column_name: str, sdg_column_value: str,
                       dsd_code_list_dict: dict):
-    """This is the iterrows solution
+    """This functions assists users to select an SDMX value from the DSD
+        when matching values from the SDG data. Rather than having to search
+        through the column on the correct tab manually.
+
+        The function uses the fuzzywuzzy library to select similar values
+        to the one to be matched from the SDG data. The user is then
+        presented with the options, or and option to choose "None" if they
+        see no good match among the options presented to them.
 
     Args:
-        column_name ([type]): [description]
-        sdg_column_value ([type]): [description]
-        dsd_code_list_dict (dict): [description]
+        column_name (str): name of the column to be searched for values
+        sdg_column_value (str): the value from the SDG data which is being
+            searched for
+        dsd_code_list_dict (dict): A dictionary of the SDMX codes (ID)
+            and their human readable (e.g. English) names
 
     Returns:
         [type]: [description]
