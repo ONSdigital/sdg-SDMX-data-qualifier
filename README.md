@@ -58,7 +58,7 @@ If any of these terms show up then a True will be placed in the geo_disag column
 
 ## Next possible steps
 
-- Testing for each of the functions, which should include data size/shape checking.
+- Testing for each of the functions, which should include dataframe size/shape checking.
 - Streamline the logic of the suitability testing - e.g. the tests for the uk_only_data overlap with national_geographical_coverage.
 - Make the SDG disagregation name --> SDMX concept matching computer-assisted just as the SDG disaggregation values --> SDMX code ID matching is
 - Make the `check_only_uk_data` function more generic so it can check for multiple terms and apply logic to other columns - e.g. the search for `geo_disag_terms`, which is currently done with a `df.col_name.str.contains(geo_disag_terms)`. Making the `check_only_uk_data` function into a more generic function would also make the code more resuable for other OpenSDG users.

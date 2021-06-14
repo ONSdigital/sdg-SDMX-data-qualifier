@@ -22,10 +22,12 @@ VERBOSE = False
 
 
 def in_path(file_name):
+    "Creates a file path for input files"
     return os.path.join("inputs", file_name)
 
 
 def out_path(file_name):
+    "Creates a file path for output files"
     return os.path.join("outputs", file_name)
 
 
