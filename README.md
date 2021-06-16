@@ -2,7 +2,7 @@
 
 ## What this script does
 
-This script selects suitable datasets from an Open data platform and manipulates the data into the form and format that is required by the UN SDGs Data Lab.
+This script selects suitable datasets from an Open data platform and manipulates the data into the form and format that is required by the [UN SDGs datalab](https://unstats.un.org/sdglab/).
 
 The datasets are selected according to user-defined criteria, which are set in the config file. For example which geographical disaggregations the indicators to be selected cover can be specified for with the "uk_terms" parameter in the config file.
 
@@ -36,7 +36,7 @@ These are configured using `suitability_test` in the config file.
 
 | Config Field                   | Default Config Value | Explanation                                                                                                                                                                                                                                                               |
 |--------------------------------|----------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| data_non_statistical           | false                | The dataset needs to be a statisical dataset to be suitable for inclusion on the UN SDGs Data Lab. As SDG data includes some non-statistical indicators and these must be excluded.                                                 |
+| data_non_statistical           | false                | The dataset needs to be a statisical dataset to be suitable for inclusion on the UN SDGs datalab. As SDG data includes some non-statistical indicators and these must be excluded.                                                 |
 | national_geographical_coverage | "United Kingdom"     | The dataset should only relate to the whole of the United Kingdom, rather than a sub-set of it                                                                                                                                                                            |
 | only_uk_data                   | true                 | Checks if the values in the national geographic coverage column of the meta data contain either "UK" or "United Kingdom" or any value that the user specifies under uk_terms in the config file.                                                                          |
 | geo_disag                      | false                | Checks the disaggregation report to see if each indicator is disaggregated by any of the disaggregation names that would indicate that there is sub-national (e.g. regional) disaggregation.                                                                              |
@@ -56,7 +56,7 @@ As such, they are listed under the "uk_terms" section of the config file.
 
 The script searches for all of these words under the geographical column, and creates a "only_uk_data" column with True and False values which is later used for testing.
 
-Some of the datasets have geographical disagregations in the data, which is not required or wanted for the UN SDGs Data Lab only wants country level data in all cases e.g. no geographical breakdowns. As such, terms that would indicate that the data are disagregated regionally are looked for in the national column. These termns include:
+Some of the datasets have geographical disagregations in the data, which is not required or wanted for the UN SDGs datalab only wants country level data in all cases e.g. no geographical breakdowns. As such, terms that would indicate that the data are disagregated regionally are looked for in the national column. These termns include:
   - Region
   - Country
   - Local Authority
