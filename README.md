@@ -10,6 +10,8 @@ The datasets are selected according to user-defined criteria, which are set in t
 
 ![Overview of the process](https://github.com/ONSdigital/sdg-SDMX-data-qualifier/blob/8cc823fd70386c36ce66f7c2077e96762b5b6c8a/images/Overview%20of%20the%20sdg-sdmx%20mapping%20process.jpg)
 
+See the ![technical process diagram](https://github.com/ONSdigital/sdg-SDMX-data-qualifier/blob/8cc823fd70386c36ce66f7c2077e96762b5b6c8a/images/SDMX_qual_flow_diagram.jpg).
+
 ## Code mapping
 
 The _disaggregation values_, in the SDG datasets are mapped to _SDMX code IDs_. For example Female within the Sex disaggregation would be mapped to the SDMX code “F”. This mapping is carried out via a semi-manual/computer-assisted process. The script looks for the best matches for the each of those values, and presents them to the user. The user has the final decision on which of the values is mapped to which SDMX value (its name in English). Then, based on the user choice of the SDMX value, the script then couples selects the SDMX code associated with that SDMX value and inserts it into the data table.
