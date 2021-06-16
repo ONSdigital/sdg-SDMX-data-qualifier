@@ -8,9 +8,9 @@ The datasets are selected according to user-defined criteria, which are set in t
 
 ## Process Diagram
 
-![Overview of the process](https://github.com/ONSdigital/sdg-SDMX-data-qualifier/blob/8cc823fd70386c36ce66f7c2077e96762b5b6c8a/images/Overview%20of%20the%20sdg-sdmx%20mapping%20process.jpg)
+![Overview of the process](https://github.com/ONSdigital/sdg-SDMX-data-qualifier/blob/c8ec7caa75251859e93ff05a68bd734ab2dbf341/images/Overview%20of%20the%20sdg-sdmx%20mapping%20process.jpg)
 
-See the ![technical process diagram](https://github.com/ONSdigital/sdg-SDMX-data-qualifier/blob/8cc823fd70386c36ce66f7c2077e96762b5b6c8a/images/SDMX_qual_flow_diagram.jpg).
+See the ![technical process diagram](https://github.com/ONSdigital/sdg-SDMX-data-qualifier/blob/c8ec7caa75251859e93ff05a68bd734ab2dbf341/images/SDMX_qual_flow_diagram.jpg).
 
 ## Code mapping
 
