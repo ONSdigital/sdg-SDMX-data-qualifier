@@ -6,9 +6,15 @@ This script selects suitable datasets from an Open data platform and manipulates
 
 The datasets are selected according to user-defined criteria, which are set in the config file. For example which geographical disaggregations the indicators to be selected cover can be specified for with the "uk_terms" parameter in the config file.
 
+## Code mapping
+
 The _disaggregation values_, in the SDG datasets are mapped to _SDMX code IDs_. For example Female within the Sex disaggregation would be mapped to the SDMX code “F”. This mapping is carried out via a semi-manual/computer-assisted process. The script looks for the best matches for the each of those values, and presents them to the user. The user has the final decision on which of the values is mapped to which SDMX value (its name in English). Then, based on the user choice of the SDMX value, the script then couples selects the SDMX code associated with that SDMX value and inserts it into the data table.
 
+## Column mapping
+
 Similiarly the _disaggregation names_, for example, Sex would be mapped to the SDMX concept SEX _SDMX concepts_. The script as it is currently leaves this step to be done entirely manually. Without a manually created csv in place (the name of which is specified in config file). Please see the "Possible next steps" section for further discussion on how this could be improved.
+
+## Why wasn't the process automated
 
 We chose to make neither the column mapping (of disaggregation name) nor code mapping (of disaggregation values) a fully automatic process. Ultimately we decided that a human must be involved in the process of intelligently choosing those the correct mappings, as some knowledge of the what the data actually mean is required.
 
