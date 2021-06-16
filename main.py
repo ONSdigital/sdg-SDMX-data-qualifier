@@ -540,7 +540,9 @@ def suggest_dsd_value(column_name: str, sdg_column_value: str,
             and their human readable (e.g. English) names
 
     Returns:
-        [type]: [description]
+        (str, str): i) The SDMX code of the SDMX name chosen by the user
+                        or "None"
+                    ii) A comment about how the code was chosen
     """
 
     dsd_code_list = _get_name_list(column_name, dsd_code_list_dict)
