@@ -2,15 +2,15 @@
 
 ## What this script does
 
-This script selects suitable datasets from an Open data platform and manipulates the data into the form and format that is required by the UN SDMX datalab platform.
+This script selects suitable datasets from an Open data platform and manipulates the data into the form and format that is required by the UN SDGs Data Lab.
 
-The datasets are selected according to user-defined criteria, which are set in the config file. For example which geographical disaggregations the indicators to be selected cover can be specified for with the "uk_terms" parameter in the config file. The user can therefore control which datasets are selected, and apply criteria to select data that meet UN SDG Lab.
+The datasets are selected according to user-defined criteria, which are set in the config file. For example which geographical disaggregations the indicators to be selected cover can be specified for with the "uk_terms" parameter in the config file.
 
-The values used in each disaggregation, or _disaggregation values_, in the SDG datasets are mapped to _SDMX code IDs_. For example the disaggregation of "Age" in the SDG datasets is broken down into different _disaggregation values_ which are ages groups, e.g. "0 to 4" and "45 and over". This mapping is carried out via a semi-manual/computer-assisted process. The script looks for the best matches for the each of those values, and presents them to the user. The user has the final decision on which of the values is mapped to which SDMX value (its name in English). Then, based on the user choice of the SDMX value, the script then couples selects the SDMX code associated with that SDMX value and inserts it into the data table.
+The _disaggregation values_, in the SDG datasets are mapped to _SDMX code IDs_. For example Female within the Sex disaggregation would be mapped to the SDMX code “F”. This mapping is carried out via a semi-manual/computer-assisted process. The script looks for the best matches for the each of those values, and presents them to the user. The user has the final decision on which of the values is mapped to which SDMX value (its name in English). Then, based on the user choice of the SDMX value, the script then couples selects the SDMX code associated with that SDMX value and inserts it into the data table.
 
-Similiarly the column headers, or _disaggregation names_, e.g. "Sex" or "Age" need to be likewise mapped to _SDMX concepts_. The script as it is currently leaves this step to be done entirely manually. Without a manually created csv in place (the name of which is specified in config file). Please see the "Possible next steps" section for further discussion on how this could be improved.
+Similiarly the _disaggregation names_, for example, Sex would be mapped to the SDMX concept SEX _SDMX concepts_. The script as it is currently leaves this step to be done entirely manually. Without a manually created csv in place (the name of which is specified in config file). Please see the "Possible next steps" section for further discussion on how this could be improved.
 
-We chose to make neither the disaggregation name mapping nor disaggregation value mapping a fully automatic process. Ultimately we decided that a human must be involved in the process of intelligently choosing those the correct mappings, as some knowledge of the what the data actually mean is required.
+We chose to make neither the column mapping (of disaggregation name) nor code mapping (of disaggregation values) a fully automatic process. Ultimately we decided that a human must be involved in the process of intelligently choosing those the correct mappings, as some knowledge of the what the data actually mean is required.
 
 Instead the two steps that require human intervention are as follows:
 
@@ -22,10 +22,11 @@ Instead the two steps that require human intervention are as follows:
 
 *this manual process may be changed to a computer-assisted process later. See "Features implement in the future" for more details
 
-## Default values for the logic test
+## Default Criteria for Selection
 
-The config file holds values that control the logic tests which test the datasets for suitability to be included in the SDMX datalab
-These are all detailed under "suitability_test".
+The config file holds values that control the criteria of the filters which remove unsuitable datasets from the selection for the SDMX datalab
+
+These are configured using `suitability_test`.
 
 | Config Field                   | Default Config Value | Explanation                                                                                                                                                                                                                                                               |
 |--------------------------------|----------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -81,3 +82,9 @@ The script was created and run using Python 3.9.2 and a conda environment. All t
 `conda install --yes --file requirements.txt`
 5) Run the script from either your editor (e.g. VS Code, Spyder) or from the command line
 `python main.py`
+
+
+# Glossary
+
+column mapping:
+code mapping:
