@@ -1,10 +1,14 @@
 # Statistical Exchange Datasets Reshaper
 
-## What this script does
+# Process: What this script does
 
 This script selects suitable datasets from an Open data platform and manipulates the data into the form and format that is required by the [UN SDGs datalab](https://unstats.un.org/sdglab/).
 
 The datasets are selected according to user-defined criteria, which are set in the config file. For example which geographical disaggregations the indicators to be selected cover can be specified for with the "uk_terms" parameter in the config file.
+
+## Process Diagram
+
+![Overview of the process](https://github.com/ONSdigital/sdg-SDMX-data-qualifier/blob/8cc823fd70386c36ce66f7c2077e96762b5b6c8a/images/Overview%20of%20the%20sdg-sdmx%20mapping%20process.jpg)
 
 ## Code mapping
 
