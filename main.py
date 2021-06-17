@@ -114,17 +114,17 @@ def check_if_proxies_contain_official():
     return contradictions_list
 
 
-# quality check
-# Make a check: none of proxy_indicator = True
-# should contain this official sentence
+# Using this function as a quality check
+# This will check that none of datasets that proxy_indicator = True
+# contain this official sentence specifed in the config file.
 check_if_proxies_contain_official()
 
-# cleaning up the national_geo col
+# cleaning up the national_geo col, as nans seem to be inconsistent.
 meta_data_df.national_geographical_coverage = (meta_data_df
                                                .national_geographical_coverage
                                                .str.replace("nan", "None"))
 
-# Remove archived indicators
+# Remove archived indicators as these datasets are  no longer current.
 meta_data_df = meta_data_df[~meta_data_df.index.str.contains("archived")]
 
 
@@ -139,37 +139,42 @@ def get_disag_report(disag_url):
     return disag_df
 
 
-# Get the disagregation report
+# Get the disagregation report for all datasets
 DISAG_URL = config['disag_url']
 disag_df = get_disag_report(DISAG_URL)
 
-# checking if Disaggregations col contains keywords geo_disag_terms
+# Checking if Disaggregations col contains keywords geo_disag_terms
+# which are specified in the config
 GEO_DISAG_TERMS_LIST = config['geo_disag_terms']
 # Join terms in list with regex or operator
 geo_disag_terms = regex_or_str(GEO_DISAG_TERMS_LIST)
-# Creating boolean
-print("Searching for ", geo_disag_terms)
+# Creating boolean to indicate whether those geographic
+# disagregation terms are present
+if VERBOSE:
+    print("Searching for ", geo_disag_terms)
 disag_boolean = (disag_df
                  .Disaggregations
                  .str.contains(geo_disag_terms, regex=True))
-if VERBOSE:
-    print(disag_boolean.value_counts())
-
 disag_df['geo_disag'] = disag_boolean
+if VERBOSE:
+    print("Disagregation boolean counts: ", disag_boolean.value_counts())
 
 # Drop the now uneeded Disaggregations cols
 required_disag_cols = config["required_disag_cols"]
 disag_df = keep_needed_df_cols(disag_df, required_disag_cols)
 
-# Set index and merge on index
+# Set the indicator number as the index and then merge on index
 disag_df.set_index("Indicator", inplace=True)
 # Left joining df onto disag_df
 meta_data_df = meta_data_df.join(disag_df)
 
 # Replacing nans with False in the geo_disag series
+# This could have been done with `na=False`, in the original str.contains
+# expression. Can be changed improved later.
+# This is necessary because if
 meta_data_df.geo_disag.replace(np.nan, False, inplace=True)
 
-# creating local variable to map for uk coverage
+# Creating local variable to map for uk coverage
 uk_terms_list = config['uk_terms']
 
 
@@ -207,11 +212,10 @@ meta_data_df.national_geographical_coverage = (meta_data_df
                                                             "United Kingdom",
                                                             regex=True))
 
-# Including 8-1-1 by setting proxy to false
+# Including 8-1-1 by setting proxy to false as it was wrongly exlcuded.
 meta_data_df.loc['8-1-1', 'proxy_indicator'] = False
 
 
-# ticket #29
 def df_sorter(df: pd.DataFrame, sort_order: list) -> pd.DataFrame:
     """Sorts a dataframe which has indicators as strigns, such as
         '1-2-1', then it sorts them according to the hierache in the
@@ -232,34 +236,38 @@ def df_sorter(df: pd.DataFrame, sort_order: list) -> pd.DataFrame:
         pd.DataFrame: a pandas dataframe sorted as required.
     """
     df.reset_index(inplace=True)
+    # renaming goal target indicator - for sorting purposes
     df.rename(columns={"index": "g-t-i"}, inplace=True)
-    # goal_targ_ind = df["g-t-i"].str.split("-", expand=True)
+    # As it should be sorted by goal, target, then indicator
+    # They must be split up in order to sort on them individually
+    # Using the sort_order as column names here to receive the split
     df[sort_order] = meta_data_df['g-t-i'].str.split("-", expand=True)
+    # Now usign the sort order with the sort_values method on the df
     df.sort_values(sort_order, axis=0, inplace=True)
+    # After the sort, now dropping unneeded columns
     df.drop([*sort_order, "g-t-i"], axis=1)
+    # Now re-setting the index as the combined goal, target, indicator number
     df.set_index("g-t-i", inplace=True)
     return df
 
 
+# Applying the df_sorter function using the sort order specified in the config
 sort_order = config["sort_order"]
 meta_data_df = df_sorter(meta_data_df, sort_order)
 
 if VERBOSE:
-    print("========================Printing meta_data_df")
+    print("===============Printing head of meta_data_df===============")
     print(meta_data_df.head(20))
 
 intermediate_outputs = config['intermediate_outputs_needed']
 if intermediate_outputs:
     # Get output filename from config to create path
     meta_data_out_path = out_path(config['meta_outfile'])
-    # write out to csv
+    # write meta data out to csv
     meta_data_df.to_csv(meta_data_out_path)
 
-# Get SDMX suitability test
-suitability_dict = config['suitability_test']
 
-
-def build_query(query_words: dict) -> str:
+def build_SQL_query(query_words: dict) -> str:
     """
     Builds an SQL style query string from a dictionary
         where keys are column titles and values are values
@@ -283,9 +291,12 @@ def build_query(query_words: dict) -> str:
     return query_string
 
 
-# make the df of included indicators
-query_string = build_query(suitability_dict)
-print("Querying meta_data_df for ", query_string)
+# Make the df of included indicators
+# Get SDMX suitability test
+suitability_dict = config['suitability_test']
+query_string = build_SQL_query(suitability_dict)
+if VERBOSE:
+    print("Querying meta_data_df for ", query_string)
 inc_df = meta_data_df.query(query_string)
 
 # Manually dropping '13-2-2', '17-5-1', '17-6-1' from df because
@@ -300,21 +311,24 @@ disag_series = (get_disag_report(DISAG_URL)
                 .loc[:, ["Indicator", "Disaggregations"]]
                 .set_index("Indicator"))
 
-# Filtering
+# Filtering the
 filtered_disags_df = disag_series.join(inc_df, how="inner")
-print(f"The shape of filtered_disags_df is {filtered_disags_df.shape}")
+if VERBOSE:
+    print(f"The shape of filtered_disags_df is {filtered_disags_df.shape}")
+# Splitting up the terms in the Disaggregations column
 split_disags = filtered_disags_df["Disaggregations"].str.split(", ")
+# Explode the lists that are the result of the split.
+# Exploded lists --> rows in the Series
 unique_disags = split_disags.explode().unique()
 
-# Column names should be sdg_column_name, SDMX_concept_name (empty column)
-df_build_dict = {
-    "sdg_column_name": unique_disags,
-    "SDMX_concept_name": np.empty_like(unique_disags)
-}
-
 # write out the csv
-intermediate_outputs = config['intermediate_outputs_needed']
 if intermediate_outputs:
+    # Creating a dictionary ready top build
+    # Column names should be sdg_column_name, SDMX_concept_name (empty column)
+    df_build_dict = {
+        "sdg_column_name": unique_disags,
+        "SDMX_concept_name": np.empty_like(unique_disags)
+    }
     sdg_cols_out_path = out_path(config["sdg_cols_outfile"])
     pd.DataFrame(data=df_build_dict).to_csv(sdg_cols_out_path)
 
@@ -346,20 +360,23 @@ def manual_excel(excel_file, wanted_cols, drop_cols=None):
                     Error Message: {ex}""")
 
 
-# Make a df of the cols
+# Make a df of the columns names that have been mapped.
+# This is the sdg_column_name (disagregation name) and SDMX_concept_name
 mapped_columns_df = manual_excel(SDG_SDMX_MANUAL_EXCEL_FILE,
                                  WANTED_COLS,
                                  DROP_COLS)
 
-# Ticket 20  - Get all disagregation values and match them with their
+# Get all disagregation values and match them with their
 # respective column titles. Output as a df and csv
-URL_prefix = "https://sdgdata.gov.uk/sdg-data/values--disaggregation--"
-URL_suffix = ".csv"
+
+# Build URLs to get the live data
+URL_prefix = config['URL_prefix']
+URL_suffix = config['URL_suffix']
 col_name_slugs = (mapped_columns_df
                   .sdg_column_name
                   .str.lower()
                   .str.replace(" ", "-"))
-
+# This will creat the correct URL for each disagregation name
 mapped_columns_df["disag_val_urls"] = URL_prefix + col_name_slugs + URL_suffix
 
 # Empty lists to capture the column names and values
@@ -368,40 +385,42 @@ col_values = []
 # Grab the column names and their respective URL values csv resource
 col_series = mapped_columns_df.sdg_column_name
 value_urls = mapped_columns_df.disag_val_urls
+# Iterate through disagregation names and URLs to read
+# the disaggregation values
 for col_name, url in zip(col_series, value_urls):
     # Get all the value disaggregations for each column
     values = pd.read_csv(url, usecols=["Value"]).to_numpy()
+    # Iterating through all the disagregation values
     for value in values:
         col_names.append(col_name)
         col_values.append(*value)
+# Creating and empty array in the right shape for df building
 emptycells = np.empty_like(col_names)
 construct_dict = {"column_value": col_values,
                   "sdg_column_name": col_names,
                   "SDMX_code": emptycells,
                   "comments": emptycells}
 
-# Creating the dataframe of vals and column match
+# Creating the dataframe of all disagregatio values matched
+# with their respective parent disaggregation names
 val_col_pairs_df = pd.DataFrame(construct_dict)
 
-# Output for #20
-intermediate_outputs = config['intermediate_outputs_needed']
+# Outputting the matched disaggregation values and
+# parent disaggregation values matched if needed.
 if intermediate_outputs:
     val_col_pairs_path = out_path(config['val_col_file'])
     val_col_pairs_df.to_csv(val_col_pairs_path)
-
-# Ticket 21 Swap SDG_column_names col for SDMX_column_name in
-# sdg_col_names_vals_df
 
 
 @cache  # Caching provides a 20x speed-up here
 def get_SDMX_colnm(search_value):
     # TODO: create a more generic v_lookup type function
-    """Gets the SDMX equivilent of all of the SDG column names,
-        by looking up the SDG column name. To be used on a the
-        sdg_column_name column of the dataframe containing the
-        SDG column names. It looks up the values sdg_column_name
-        column and returns their equivilent from SDMX_concept_name
-        column of `mapped_columns_df` which came from the
+    """Gets the SDMX equivilent of all of the SDG disaggregation
+        names, by looking up the SDG disaggregation name. To be
+        used on a the sdg_column_name column of the dataframe
+        containing the SDG dissagregation names. It looks up the values
+        sdg_column_name column and returns their equivilent from
+        SDMX_concept_name column of `mapped_columns_df` which came from the
         manual-input Excel file.
 
     Args:
@@ -426,10 +445,11 @@ val_col_pairs_df["sdmx_col_nm"] = (val_col_pairs_df
 # Dropping the old SDG column names
 val_col_pairs_df.drop(columns=["sdg_column_name"], inplace=True)
 # Renaming the SDMX col names as "column_name"
+# TODO: column_name should probably be renamed disaggregation name
 val_col_pairs_df.rename(columns={"sdmx_col_nm": "column_name",
                         "SDMX_code": "sdmx_code"},
                         inplace=True)
-# Reordering columns
+# Reordering columns as required
 order_cols = ['column_name', 'column_value', 'sdmx_code', 'comments']
 val_col_pairs_df = val_col_pairs_df[order_cols]
 
@@ -439,15 +459,16 @@ val_col_pairs_df.drop_duplicates(subset=["column_name",
                                          "column_value"],
                                  inplace=True)
 after_shape = val_col_pairs_df.shape
-print(f"""De-depuping finished.
+
+if VERBOSE:
+    print(f"""De-depuping finished.
       {before_shape[0] - after_shape[0]} records were dropped.""", end="")
 
 # Outputting result to csv
-intermediate_outputs = config['intermediate_outputs_needed']
 if intermediate_outputs:
     val_col_pairs_df.to_csv("SDMX_colnames_values_matched-#21.csv")
 
-# Import DSD
+# Import the International DSD
 dsd_xls = pd.ExcelFile(config['dsd_url'])
 
 concept_sch = (pd.read_excel(dsd_xls,
@@ -459,6 +480,17 @@ concept_sch = (pd.read_excel(dsd_xls,
 
 
 def get_dsd_tab_name(concept_sch, concept_name):
+    """ This function looks up the correct Excel tab name
+        by finding the row in which the Concept Name column
+        in the schema is the same as the concept_name (a search term
+        supplied as a parameter to the function).
+
+        For example if the Concept Name is "Income or wealth quantile"
+        this would be on line 14 of the schema. So the function will
+        the value that is in the "Code List or Uncoded" on line 14
+        of the schema, which is "CL_QUANTILE", which is the correct
+        name of the tab in the Excel sheet.
+        """
     res = concept_sch[concept_sch['Concept Name:en'] == concept_name]
     if res.shape[0] > 0:
         row_num = res.index[0]
@@ -469,7 +501,9 @@ def get_dsd_tab_name(concept_sch, concept_name):
 
 
 dsd_code_name_list_dict = {}
+# Get every unique column (disaggregation) name and iterate through
 for col_name in val_col_pairs_df.loc[:, 'column_name'].unique():
+    # get the correct tab name in the excel sheet for that disaggregation
     tab_name = get_dsd_tab_name(concept_sch, col_name)
     if not tab_name:
         print(f"Warning: No tab name for {col_name} was found")
@@ -482,6 +516,7 @@ for col_name in val_col_pairs_df.loc[:, 'column_name'].unique():
                                  header=0,
                                  usecols=[0, 4])
     # Column 0 is the SDMX code, 1 is the SDMX name (more human friendly)
+    # Make a dictionary to enable mapping from SDMX names --> SDMX codes
     names = dsd_from_tab.iloc[:, 1].to_list()
     codes = dsd_from_tab.iloc[:, 0].to_list()
     # Put the SDMX codes and names into a dictionary for user choosing later.
@@ -490,7 +525,8 @@ for col_name in val_col_pairs_df.loc[:, 'column_name'].unique():
 
 
 def _valid_int_input(prompt, highest_input):
-    "Validating input for the suggest_dsd_value function"
+    """Validating input for the suggest_dsd_value function.
+        Should prevent bad input and handle errors"""
     while True:
         try:
             inp = int(input(prompt))
@@ -515,7 +551,7 @@ Or press {} if there is no suitable match:  """
 
 
 def _get_name_list(column_name, dsd_code_list_dict=dsd_code_name_list_dict):
-    """Created to simplify the suggest_dsd_value function.
+    """Internal function created to simplify the suggest_dsd_value function.
         Creates a list from the code name list dictionary's keys
         for any particular column"""
     return dsd_code_list_dict[column_name].keys()
@@ -577,11 +613,12 @@ def suggest_dsd_value(column_name: str, sdg_column_value: str,
     return "None", f"Automatic. No matches found for {sdg_column_value}"
 
 
-# ticket #46 function to map "Name:en" to "Code*"
+# Function to map "Name:en" to "Code*"
 # Set map_manual_names_to_codes if you have a manually edited file
 # that needs mapping from SDMX names (English) to SDMX concept codes.
 
-
+# Controls if the disaggregation codes are to be
+# manually mapped again
 manually_choose_code_mapping = False
 
 if manually_choose_code_mapping:
