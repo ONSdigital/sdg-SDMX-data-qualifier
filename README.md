@@ -10,7 +10,7 @@ The datasets are selected according to user-defined criteria, which are set in t
 
 ![Overview of the process](https://github.com/ONSdigital/sdg-SDMX-data-qualifier/blob/c8ec7caa75251859e93ff05a68bd734ab2dbf341/images/Overview%20of%20the%20sdg-sdmx%20mapping%20process.jpg)
 
-See the [technical process diagram](https://github.com/ONSdigital/sdg-SDMX-data-qualifier/blob/c8ec7caa75251859e93ff05a68bd734ab2dbf341/images/SDMX_qual_flow_diagram.jpg).
+See the [technical process diagram](https://github.com/ONSdigital/sdg-SDMX-data-qualifier/blob/da1b71ee7799bfa96043ef8747d77d9f983b0faa/images/SDMX_qual_flow_diagram.jpg).
 
 These process images were created using [Libre Office Draw](https://www.libreoffice.org/discover/draw/). The editable files are in the images/editable folder.
 

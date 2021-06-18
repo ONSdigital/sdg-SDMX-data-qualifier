@@ -445,7 +445,7 @@ val_col_pairs_df["sdmx_col_nm"] = (val_col_pairs_df
 # Dropping the old SDG column names
 val_col_pairs_df.drop(columns=["sdg_column_name"], inplace=True)
 # Renaming the SDMX col names as "column_name"
-# TODO: column_name should probably be renamed disaggregation name
+# TODO: column_name should probably be renamed "disaggregation name"
 val_col_pairs_df.rename(columns={"sdmx_col_nm": "column_name",
                         "SDMX_code": "sdmx_code"},
                         inplace=True)
@@ -619,7 +619,7 @@ def suggest_dsd_value(column_name: str, sdg_column_value: str,
 
 # Controls if the disaggregation codes are to be
 # manually mapped again
-manually_choose_code_mapping = False
+manually_choose_code_mapping = config['manually_choose_code_mapping']
 
 if manually_choose_code_mapping:
     # Setting up a dictionary to ready for the construction of the
@@ -651,20 +651,20 @@ if manually_choose_code_mapping:
 
     print(val_col_pairs_df.sample(20))
 
+
+if intermediate_outputs:
     manual_chosen_vals_out_path = out_path(config['manual_names_to_codes'])
     val_col_pairs_df.to_excel(manual_chosen_vals_out_path)
     manual_chosen_vals_out_path_csv = (out_path
                                        (config['manual_names_to_codes_csv']))
-
     val_col_pairs_df.to_csv(manual_chosen_vals_out_path_csv, quotechar="'")
 
 
-# Ticket 44 Code Mapping in correct format -
-# https://github.com/ONSdigital/sdg-SDMX-data-qualifier/issues/44
-WANTED_COLS_44 = ["column_value", "column_name", "sdmx_code"]
-code_mapping_44_df = (manual_excel
-                      ("manually_chosen_values_corrected.xlsx",
-                       WANTED_COLS_44))
+# Code Mapping in correct format as reuired for SDMX
+WANTED_COLS_CODE_MAPPING = ["column_value", "column_name", "sdmx_code"]
+code_mapping_df = (manual_excel
+                   ("manually_chosen_values_corrected.xlsx",
+                    WANTED_COLS_CODE_MAPPING))
 
 # The concept names need mapping to the concept IDs which come from the DSD
 # Import the needed columns from the DSD for the name --> concept ID mapping
@@ -681,37 +681,39 @@ concept_id_names_df.rename(columns={'Concept Name:en': "concept_name",
 concept_id_names_mapping_dict = (concept_id_names_df
                                  .set_index("concept_name")
                                  .to_dict()['concept_id'])
-# Create the Dimension column as required in ticket 44
-code_mapping_44_df['Dimension'] = (code_mapping_44_df
+# Create the Dimension column as required for SDMX
+code_mapping_df['Dimension'] = (code_mapping_df
                                    .column_name
                                    .map(concept_id_names_mapping_dict))
 # column_name was only needed for mapping - dropping it now
-code_mapping_44_df.drop("column_name", axis=1, inplace=True)
-code_mapping_44_df.rename(columns={'sdmx_code': "Value",
-                                   'column_value': 'Text'},
-                          inplace=True)
-# Reorder the columns as required in ticket 44.
-ORDER_44 = ['Text', 'Dimension', 'Value']
-code_mapping_44_df = code_mapping_44_df[ORDER_44]
+code_mapping_df.drop("column_name", axis=1, inplace=True)
+code_mapping_df.rename(columns={'sdmx_code': "Value",
+                                'column_value': 'Text'},
+                       inplace=True)
+# Reorder the columns as required
+ORDER_CODE_MAPPING = ['Text', 'Dimension', 'Value']
+code_mapping_df = code_mapping_df[ORDER_CODE_MAPPING]
 # Drop empty rows
-code_mapping_44_df.dropna(subset=["Value", "Text"], axis='index', inplace=True)
-# Write out to csv
-code_mapp_out_path = out_path(config['code_mapping_out_file'])
-code_mapping_44_df.to_csv(code_mapp_out_path, sep="\t", index=False)
+code_mapping_df.dropna(subset=["Value", "Text"], axis='index', inplace=True)
+# Write disaggregation code mapping out to csv
+code_map_out_path = out_path(config['code_mapping_out_file'])
+code_mapping_df.to_csv(code_map_out_path, sep="\t", index=False)
 
 
-# Ticket 45 Column Mapping in correct format -
-# https://github.com/ONSdigital/sdg-SDMX-data-qualifier/issues/45
-WANTED_COLS_45 = ["sdg_column_name", "SDMX_Concept_ID"]
-# Using the EXCEL_FILE object which is the manual chosen mapping
+# Column (disaggregation name) mapping in correct format for SDMX
+WANTED_COLS_COL_MAPPING = ["sdg_column_name", "SDMX_Concept_ID"]
+# Using the ExceFile object which is the manual chosen mapping
 # for SDG column names to SDMX concepts
-column_mapping_45_df = manual_excel(SDG_SDMX_MANUAL_EXCEL_FILE,
-                                    WANTED_COLS_45)
-column_mapping_45_df.dropna(subset=["SDMX_Concept_ID"],
-                            axis='index',
-                            inplace=True)
-column_mapping_45_df.rename(columns={"sdg_column_name": "Text",
-                                     "SDMX_Concept_ID": "Value"},
-                            inplace=True)
+column_mapping_df = manual_excel(SDG_SDMX_MANUAL_EXCEL_FILE,
+                                 WANTED_COLS_COL_MAPPING)
+# Drop empty rows
+column_mapping_df.dropna(subset=["SDMX_Concept_ID"],
+                         axis='index',
+                         inplace=True)
+# Rename column headers as required for SDMX
+column_mapping_df.rename(columns={"sdg_column_name": "Text",
+                         "SDMX_Concept_ID": "Value"},
+                         inplace=True)
+# Write SDMX formatted disaggregation names out to csv
 column_mapping_out_path = out_path(config['column_mapping_out_file'])
-column_mapping_45_df.to_csv(column_mapping_out_path, sep="\t", index=False)
+column_mapping_df.to_csv(column_mapping_out_path, sep="\t", index=False
