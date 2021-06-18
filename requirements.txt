@@ -1,4 +1,5 @@
 pandas
 pyyaml
 openpyxl
- 
+fuzzywuzzy # conda install -c conda-forge fuzzywuzzy
+tqdm
