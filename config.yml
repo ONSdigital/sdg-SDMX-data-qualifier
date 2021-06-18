@@ -1,7 +1,7 @@
 meta_url: https://sdgdata.gov.uk/sdg-data/en/meta/all.json
 disag_url: https://sdgdata.gov.uk/sdg-data/disaggregation-by-indicator-report.csv
 dsd_url: https://unstats.un.org/sdgs/files/SDG_DSD_MATRIX.1.4.xlsm
-required_cols: 
+required_cols:
   - other_info
   - data_non_statistical
   - national_geographical_coverage
@@ -18,15 +18,10 @@ proxy_terms:
 uk_terms:
   - United Kingdom
   - UK
-  - England, Scotland, Wales, Northern Ireland
 geo_disag_terms:
   - Region
   - Country
   - Local Authority
-meta_outfile: meta_data.csv
-disag_outfile: disag.csv
-sdg_cols_outfile : SDG_column_names.csv
-manual_excel_file_name: sdg_sdmx_colnames-manual.xlsx
 suitability_test:
   data_non_statistical: false
   national_geographical_coverage: "United Kingdom"
@@ -42,3 +37,21 @@ sort_order:
   - goal
   - target
   - indicator
+manual_names_to_codes: "manually_chosen_values.xlsx"
+manual_names_to_codes_csv: "manually_chosen_values"
+manual_chosen_codes_out_path: "manually_chosen_values_corrected.xlsx"
+val_col_file: "val_col_pairs.csv"
+code_mapping_out_file: code_mapping.csv
+column_mapping_out_file: concept_mapping.csv
+meta_outfile: meta_data_df.csv
+disag_outfile: disag.csv
+sdg_cols_outfile : SDG_column_names.csv
+# intermediate_outputs_needed controls if intermediate steps are produced as a csv,
+# which can be used for quality checks and better understanding what the script is doing
+intermediate_outputs_needed : false
+# verbose option controls if the script prints out diagnostics
+verbose : false
+URL_prefix : "https://sdgdata.gov.uk/sdg-data/values--disaggregation--"
+URL_suffix : ".csv"
+# This controls whether the computer assisted disaggregation value mapping is used or not
+manually_choose_code_mapping: false

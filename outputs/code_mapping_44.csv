@@ -1,0 +1,276 @@
+Text	Dimension	Value
+1st quintile (lowest)	INCOME_WEALTH_QUANTILE	Q1
+2nd quintile	INCOME_WEALTH_QUANTILE	Q2
+3rd quintile	INCOME_WEALTH_QUANTILE	Q3
+4th quintile	INCOME_WEALTH_QUANTILE	Q4
+5th quintile (highest)	INCOME_WEALTH_QUANTILE	Q5
+Bottom 40%	INCOME_WEALTH_QUANTILE	B40
+1 to 4	AGE	Y1T4
+10 to 14	AGE	Y10T14
+10 to 19	AGE	Y10T19
+15 to 17	AGE	Y15T17
+15 to 19	AGE	Y15T19
+15 to 24	AGE	Y15T24
+16 to 24	AGE	Y16T24
+16 to 24 #	AGE	Y16T24
+17 and under	AGE	Y0T17
+18 to 19	AGE	Y18T19
+18 to 24	AGE	Y18T24
+20 to 24	AGE	Y20T24
+20 to 24 *	AGE	Y20T24
+25 to 29	AGE	Y25T29
+25 to 34	AGE	Y25T34
+30 to 34	AGE	Y30T34
+30 to 39	AGE	Y30T39
+35 to 39	AGE	Y35T39
+35 to 44	AGE	Y35T44
+35 to 49	AGE	Y35T49
+4 and under	AGE	Y0T4
+40 to 44	AGE	Y40T44
+40 to 49	AGE	Y40T49
+45 to 49	AGE	Y45T49
+45 to 54	AGE	Y45T54
+5 to 14	AGE	Y5T14
+5 to 15	AGE	Y15T65
+50 to 54	AGE	Y50T54
+50 to 59	AGE	Y50T59
+55 to 59	AGE	Y55T59
+55 to 59 *	AGE	Y55T59
+55 to 64	AGE	Y55T64
+60 and over	AGE	Y_GE60
+60 to 64	AGE	Y60T64
+60 to 64 *	AGE	Y60T64
+60 to 69	AGE	Y60T69
+65 and over	AGE	Y_GE65
+65 and over *	AGE	Y_GE65
+65 to 69	AGE	Y65T69
+65 to 74	AGE	Y65T74
+70 and over	AGE	Y_GE70
+70 to 74	AGE	Y70T74
+75 and over	AGE	Y_GE75
+75 to 79	AGE	Y75T79
+75 to 84	AGE	Y75T84
+80 to 84	AGE	Y80T84
+85 and over	AGE	Y_GE85
+85 to 89	AGE	Y85T89
+85+	AGE	Y_GE85
+90 and over	AGE	Y_GE90
+By age 18	AGE	Y0T17
+Under 1	AGE	Y0
+Under 15	AGE	Y0T14
+Boys	SEX	M
+Female	SEX	F
+Girls	SEX	F
+Male	SEX	M
+Men	SEX	M
+Women	SEX	F
+Africa	REF_AREA	2
+Americas	REF_AREA	19
+Asia	REF_AREA	142
+Europe	REF_AREA	150
+Afghanistan	REF_AREA	AF
+Albania	REF_AREA	AL
+Algeria	REF_AREA	DZ
+Angola	REF_AREA	AO
+Anguilla	REF_AREA	AI
+Antigua and Barbuda	REF_AREA	AG
+Argentina	REF_AREA	AR
+Armenia	REF_AREA	AM
+Azerbaijan	REF_AREA	AZ
+Bangladesh	REF_AREA	BD
+Barbados	REF_AREA	BB
+Belarus	REF_AREA	BY
+Belize	REF_AREA	BZ
+Benin	REF_AREA	BJ
+Bhutan	REF_AREA	BT
+Bolivia	REF_AREA	BO
+Bosnia-Herzegovina	REF_AREA	BA
+Botswana	REF_AREA	BW
+Brazil	REF_AREA	BR
+Burkina Faso	REF_AREA	BF
+Burundi	REF_AREA	BI
+Cambodia	REF_AREA	KH
+Cameroon	REF_AREA	CM
+Cape Verde	REF_AREA	CV
+Chad	REF_AREA	TD
+Chile	REF_AREA	CL
+China	REF_AREA	CN
+Colombia	REF_AREA	CO
+Comoros	REF_AREA	KM
+Congo, Rep.	REF_AREA	CD
+Costa Rica	REF_AREA	CR
+Cote d'Ivoire	REF_AREA	CI
+Croatia	REF_AREA	HR
+Cuba	REF_AREA	CU
+Democratic People's Republic of Korea	REF_AREA	KP
+Democratic Republic of the Congo	REF_AREA	CD
+Djibouti	REF_AREA	DJ
+Dominica	REF_AREA	DM
+Dominican Republic	REF_AREA	DO
+Ecuador	REF_AREA	EC
+Egypt	REF_AREA	EG
+El Salvador	REF_AREA	SV
+Eritrea	REF_AREA	ER
+Ethiopia	REF_AREA	ET
+Fiji	REF_AREA	FJ
+Former Yugoslav Republic of Macedonia (FYROM)	REF_AREA	MK
+Gabon	REF_AREA	GA
+Gambia	REF_AREA	GM
+Georgia	REF_AREA	GE
+Ghana	REF_AREA	GH
+Grenada	REF_AREA	GD
+Guatemala	REF_AREA	GT
+Guinea-Bissau	REF_AREA	GW
+Guinea	REF_AREA	GN
+Guyana	REF_AREA	GY
+Haiti	REF_AREA	HT
+Honduras	REF_AREA	HN
+India	REF_AREA	IN
+Indonesia	REF_AREA	ID
+Iran	REF_AREA	IR
+Iraq	REF_AREA	IQ
+Jamaica	REF_AREA	JM
+Jordan	REF_AREA	JO
+Kazakhstan	REF_AREA	KZ
+Kenya	REF_AREA	KE
+Kiribati	REF_AREA	KI
+Kosovo	REF_AREA	XK
+Laos	REF_AREA	LA
+Lebanon	REF_AREA	LB
+Lesotho	REF_AREA	LS
+Liberia	REF_AREA	LR
+Libya	REF_AREA	LY
+Madagascar	REF_AREA	MG
+Malawi	REF_AREA	MW
+Malaysia	REF_AREA	MY
+Maldives	REF_AREA	MV
+Mali	REF_AREA	ML
+Marshall Islands	REF_AREA	MH
+Mauritania	REF_AREA	MR
+Mauritius	REF_AREA	MU
+Mexico	REF_AREA	MX
+Micronesia	REF_AREA	57
+Moldova	REF_AREA	MD
+Mongolia	REF_AREA	MN
+Montenegro	REF_AREA	ME
+Montserrat	REF_AREA	MS
+Morocco	REF_AREA	MA
+Mozambique	REF_AREA	MZ
+Myanmar	REF_AREA	MM
+Nauru	REF_AREA	NR
+Nepal	REF_AREA	NP
+Nicaragua	REF_AREA	NI
+Niger	REF_AREA	NE
+Nigeria	REF_AREA	NG
+Oman	REF_AREA	OM
+Pakistan	REF_AREA	PK
+Palau	REF_AREA	PW
+Panama	REF_AREA	PA
+Papua New Guinea	REF_AREA	PG
+Paraguay	REF_AREA	PY
+Peru	REF_AREA	PE
+Philippines	REF_AREA	PH
+Rwanda	REF_AREA	RW
+Samoa	REF_AREA	WS
+Sao Tome & Principe	REF_AREA	ST
+Senegal	REF_AREA	SN
+Serbia	REF_AREA	RS
+Seychelles	REF_AREA	SC
+Sierra Leone	REF_AREA	SL
+Solomon Islands	REF_AREA	SB
+Somalia	REF_AREA	SO
+South Africa	REF_AREA	ZA
+South Sudan	REF_AREA	SS
+Sri Lanka	REF_AREA	LK
+St. Helena	REF_AREA	SH
+St. Kitts-Nevis	REF_AREA	KN
+St. Lucia	REF_AREA	LC
+States Ex-Yugoslavia unspecified	REF_AREA	890
+St.Vincent & Grenadines	REF_AREA	VC
+Sudan	REF_AREA	SD
+Suriname	REF_AREA	SR
+Syria	REF_AREA	SY
+Tajikistan	REF_AREA	TJ
+Tanzania	REF_AREA	TZ
+Thailand	REF_AREA	TH
+Timor-Leste	REF_AREA	TL
+Togo	REF_AREA	TG
+Tonga	REF_AREA	TO
+Trinidad & Tobago	REF_AREA	TT
+Tunisia	REF_AREA	TN
+Turkey	REF_AREA	TR
+Turkmenistan	REF_AREA	TM
+Tuvalu	REF_AREA	TV
+Uganda	REF_AREA	UG
+Ukraine	REF_AREA	UA
+Uruguay	REF_AREA	UY
+Uzbekistan	REF_AREA	UZ
+Vanuatu	REF_AREA	VU
+Venezuela	REF_AREA	VE
+Vietnam	REF_AREA	VN
+Yemen	REF_AREA	YE
+Zambia	REF_AREA	ZM
+Zimbabwe	REF_AREA	ZW
+Biomass	PRODUCT	MF1
+Fossil fuels	PRODUCT	MF4
+Metal ores excluding precious metals	PRODUCT	MF2
+Metal ores	PRODUCT	MF2
+Non-metallic minerals	PRODUCT	MF3
+Agriculture, forestry and fishing	ACTIVITY	ISIC4_A
+Construction	ACTIVITY	ISIC4_F
+Electricity, gas, steam and air conditioning supply	ACTIVITY	ISIC4_D
+Households	ACTIVITY	HH
+Manufacture of basic metals and fabricated metal products, except machinery and equipment	ACTIVITY	ISIC4_C10T32X19
+Manufacture of chemical, pharmaceutical, rubber and plastic products	ACTIVITY	ISIC4_C10T32X19
+Manufacture of coke and refined petroleum products	ACTIVITY	ISIC4_C
+Manufacture of computer, electronic and optical products, electrical equipment, motor vehicles and other transport equipment	ACTIVITY	ISIC4_C10T32X19
+Manufacture of food products, beverages and tobacco products	ACTIVITY	ISIC4_C10T32X19
+Manufacture of furniture, jewellery, musical instruments, toys, repair and installation or machinery and equipment	ACTIVITY	ISIC4_C10T32X19
+Manufacture of other non-metallic mineral products	ACTIVITY	ISIC4_C10T32X19
+Manufacture of paper and paper products, printing and reproduction or recorded media	ACTIVITY	ISIC4_C10T32X19
+Manufacture of textiles, wearing apparel, leather and related products	ACTIVITY	ISIC4_C10T32X19
+Manufacture of wood and of products of wood and cork, except furniture, manufacture of articles of straw and plaiting materials	ACTIVITY	ISIC4_C10T32X19
+Mining and quarrying	ACTIVITY	ISIC4_B
+Services (except wholesale of waste and scrap)	ACTIVITY	ISIC4_GTS
+Water collection, treatment and supply, sewerage, remediation activities and other waste management services	ACTIVITY	ISIC4_E
+Rural	URBANISATION	R
+Urban	URBANISATION	U
+Accommodation and food service activities #	ACTIVITY	ISIC4_I
+Accommodation and food services	ACTIVITY	ISIC4_I
+Activities of households as employers; undifferentiated goods and services-producing activities of households for own use	ACTIVITY	ISIC4_T
+Activities of households as employers; undifferentiated goods-and services-producing activities of households for own use #	ACTIVITY	ISIC4_T
+Activities of households as employers	ACTIVITY	ISIC4_T
+Administrative and support activities	ACTIVITY	ISIC4_N
+Administrative and support service activities #	ACTIVITY	ISIC4_N
+Administrative and support service activities	ACTIVITY	ISIC4_N
+Arts, entertainment and recreation #	ACTIVITY	ISIC4_R
+Arts, entertainment and recreation	ACTIVITY	ISIC4_R
+Education #	ACTIVITY	ISIC4_P
+Education	ACTIVITY	ISIC4_P
+Electricity, gas, steam and air conditioning supply #	ACTIVITY	ISIC4_D
+Financial and insurance activities #	ACTIVITY	ISIC4_K
+Financial and insurance activities	ACTIVITY	ISIC4_K
+Financial and insurance	ACTIVITY	ISIC4_K
+Human health and social activities	ACTIVITY	ISIC4_Q
+Human health and social work activities #	ACTIVITY	ISIC4_Q
+Human health and social work activities	ACTIVITY	ISIC4_Q
+Information and communication #	ACTIVITY	ISIC4_J
+Information and communication	ACTIVITY	ISIC4_J
+Manufacturing	ACTIVITY	ISIC4_C
+Other service activities #	ACTIVITY	ISIC4_S
+Other service activities	ACTIVITY	ISIC4_S
+Professional, scientific and technical activities #	ACTIVITY	ISIC4_M
+Professional, scientific and technical activities	ACTIVITY	ISIC4_M
+Public administration and defence; compulsory social security #	ACTIVITY	ISIC4_O
+Public administration and defence; compulsory social security	ACTIVITY	ISIC4_O
+Real estate activities #	ACTIVITY	ISIC4_L
+Real estate activities	ACTIVITY	ISIC4_L
+Real estate	ACTIVITY	ISIC4_L
+Service industries *	ACTIVITY	ISIC4_S
+Transport and storage	ACTIVITY	ISIC4_H
+Transportation and storage #	ACTIVITY	ISIC4_H
+Transportation and storage	ACTIVITY	ISIC4_H
+Water supply; sewerage, waste management and remediation activities #	ACTIVITY	ISIC4_E
+Water supply; sewerage, waste management and remediation activities	ACTIVITY	ISIC4_E
+Wholesale and retail trade; repair of motor vehicles and motorcycles #	ACTIVITY	ISIC4_G
+Wholesale and retail trade; repair of motor vehicles and motorcycles	ACTIVITY	ISIC4_G
