@@ -20,7 +20,6 @@ meta_data_df = pd.read_json(meta_url, orient='index')
 # Verbose setting for print outs
 VERBOSE = False
 
-
 def in_path(file_name):
     "Creates a file path for input files"
     return os.path.join("inputs", file_name)
@@ -138,8 +137,8 @@ def get_disag_report(disag_url):
     disag_df.Indicator = disag_df.Indicator.str.lstrip("#")
     return disag_df
 
-
 # Get the disagregation report for all datasets
+
 DISAG_URL = config['disag_url']
 disag_df = get_disag_report(DISAG_URL)
 
@@ -148,6 +147,7 @@ disag_df = get_disag_report(DISAG_URL)
 GEO_DISAG_TERMS_LIST = config['geo_disag_terms']
 # Join terms in list with regex or operator
 geo_disag_terms = regex_or_str(GEO_DISAG_TERMS_LIST)
+
 # Creating boolean to indicate whether those geographic
 # disagregation terms are present
 if VERBOSE:
@@ -176,7 +176,6 @@ meta_data_df.geo_disag.replace(np.nan, False, inplace=True)
 
 # Creating local variable to map for uk coverage
 uk_terms_list = config['uk_terms']
-
 
 def check_only_uk_data(nat_geo_series, geo_disag_series, uk_terms):
     """Checks if Both of these conditions need to met
@@ -236,6 +235,7 @@ def df_sorter(df: pd.DataFrame, sort_order: list) -> pd.DataFrame:
         pd.DataFrame: a pandas dataframe sorted as required.
     """
     df.reset_index(inplace=True)
+
     # renaming goal target indicator - for sorting purposes
     df.rename(columns={"index": "g-t-i"}, inplace=True)
     # As it should be sorted by goal, target, then indicator
@@ -268,6 +268,7 @@ if intermediate_outputs:
 
 
 def build_SQL_query(query_words: dict) -> str:
+
     """
     Builds an SQL style query string from a dictionary
         where keys are column titles and values are values
@@ -275,7 +276,6 @@ def build_SQL_query(query_words: dict) -> str:
 
     Args:
         query_words (dict): a dictionary where keys are column
-
             titles and values are values
 
     Returns:
@@ -290,13 +290,14 @@ def build_SQL_query(query_words: dict) -> str:
             query_string += " & "
     return query_string
 
-
+  
 # Make the df of included indicators
 # Get SDMX suitability test
 suitability_dict = config['suitability_test']
 query_string = build_SQL_query(suitability_dict)
 if VERBOSE:
     print("Querying meta_data_df for ", query_string)
+
 inc_df = meta_data_df.query(query_string)
 
 # Manually dropping '13-2-2', '17-5-1', '17-6-1' from df because
@@ -311,7 +312,8 @@ disag_series = (get_disag_report(DISAG_URL)
                 .loc[:, ["Indicator", "Disaggregations"]]
                 .set_index("Indicator"))
 
-# Filtering the
+
+# Filtering the disaggregation dataframe
 filtered_disags_df = disag_series.join(inc_df, how="inner")
 if VERBOSE:
     print(f"The shape of filtered_disags_df is {filtered_disags_df.shape}")
@@ -372,10 +374,12 @@ mapped_columns_df = manual_excel(SDG_SDMX_MANUAL_EXCEL_FILE,
 # Build URLs to get the live data
 URL_prefix = config['URL_prefix']
 URL_suffix = config['URL_suffix']
+
 col_name_slugs = (mapped_columns_df
                   .sdg_column_name
                   .str.lower()
                   .str.replace(" ", "-"))
+
 # This will creat the correct URL for each disagregation name
 mapped_columns_df["disag_val_urls"] = URL_prefix + col_name_slugs + URL_suffix
 
@@ -385,8 +389,10 @@ col_values = []
 # Grab the column names and their respective URL values csv resource
 col_series = mapped_columns_df.sdg_column_name
 value_urls = mapped_columns_df.disag_val_urls
+
 # Iterate through disagregation names and URLs to read
 # the disaggregation values
+
 for col_name, url in zip(col_series, value_urls):
     # Get all the value disaggregations for each column
     values = pd.read_csv(url, usecols=["Value"]).to_numpy()
@@ -405,6 +411,7 @@ construct_dict = {"column_value": col_values,
 # with their respective parent disaggregation names
 val_col_pairs_df = pd.DataFrame(construct_dict)
 
+
 # Outputting the matched disaggregation values and
 # parent disaggregation values matched if needed.
 if intermediate_outputs:
@@ -421,6 +428,7 @@ def get_SDMX_colnm(search_value):
         containing the SDG dissagregation names. It looks up the values
         sdg_column_name column and returns their equivilent from
         SDMX_concept_name column of `mapped_columns_df` which came from the
+
         manual-input Excel file.
 
     Args:
@@ -450,6 +458,7 @@ val_col_pairs_df.rename(columns={"sdmx_col_nm": "column_name",
                         "SDMX_code": "sdmx_code"},
                         inplace=True)
 # Reordering columns as required
+
 order_cols = ['column_name', 'column_value', 'sdmx_code', 'comments']
 val_col_pairs_df = val_col_pairs_df[order_cols]
 
@@ -504,6 +513,7 @@ dsd_code_name_list_dict = {}
 # Get every unique column (disaggregation) name and iterate through
 for col_name in val_col_pairs_df.loc[:, 'column_name'].unique():
     # get the correct tab name in the excel sheet for that disaggregation
+
     tab_name = get_dsd_tab_name(concept_sch, col_name)
     if not tab_name:
         print(f"Warning: No tab name for {col_name} was found")
@@ -651,12 +661,14 @@ if manually_choose_code_mapping:
 
     print(val_col_pairs_df.sample(20))
 
+    
     manual_chosen_vals_out_path = out_path(config['manual_names_to_codes'])
     val_col_pairs_df.to_excel(manual_chosen_vals_out_path)
     manual_chosen_vals_out_path_csv = (out_path
                                        (config['manual_names_to_codes_csv']))
 
     val_col_pairs_df.to_csv(manual_chosen_vals_out_path_csv, quotechar="'")
+
 
 
 # Ticket 44 Code Mapping in correct format -
@@ -666,8 +678,10 @@ code_mapping_44_df = (manual_excel
                       ("manually_chosen_values_corrected.xlsx",
                        WANTED_COLS_44))
 
+
 # The concept names need mapping to the concept IDs which come from the DSD
 # Import the needed columns from the DSD for the name --> concept ID mapping
+
 concept_id_names_df = pd.read_excel(dsd_xls,
                                     engine="openpyxl",
                                     sheet_name="3.Concept Scheme",
@@ -696,8 +710,10 @@ code_mapping_44_df = code_mapping_44_df[ORDER_44]
 # Drop empty rows
 code_mapping_44_df.dropna(subset=["Value", "Text"], axis='index', inplace=True)
 # Write out to csv
+
 code_mapp_out_path = out_path(config['code_mapping_out_file'])
 code_mapping_44_df.to_csv(code_mapp_out_path, sep="\t", index=False)
+
 
 
 # Ticket 45 Column Mapping in correct format -
@@ -713,5 +729,6 @@ column_mapping_45_df.dropna(subset=["SDMX_Concept_ID"],
 column_mapping_45_df.rename(columns={"sdg_column_name": "Text",
                                      "SDMX_Concept_ID": "Value"},
                             inplace=True)
+
 column_mapping_out_path = out_path(config['column_mapping_out_file'])
 column_mapping_45_df.to_csv(column_mapping_out_path, sep="\t", index=False)
