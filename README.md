@@ -11,7 +11,7 @@ Table of contents
 5. [Default Criteria for Selection](#default-criteria-for-selection)
 6. [Challenges Faced](#challenges-faced)
 7. [Next Possible Development Steps](#next-possible-steps)
-8. [Instructions on how to use script](#how-to-install-and-run-the-script)
+8. [How to Install and Run the Script](#how-to-install-and-run-the-script)
 9. [Glossary](#glossary)
 
 # Process: What this script does <a name="about_script"></a>
