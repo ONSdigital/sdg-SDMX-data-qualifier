@@ -1,6 +1,13 @@
 # Statistical Exchange Datasets Reshaper
 
-# Process: What this script does
+
+Table of contents
+1. [What this script does](#about_script)
+2. [Some paragraph](#paragraph1)
+    1. [Sub paragraph](#subparagraph1)
+3. [Another paragraph](#paragraph2)
+
+# Process: What this script does <a name="about_script"></a>
 
 This script selects suitable datasets from an Open data platform and manipulates the data into the form and format that is required by the [UN SDGs datalab](https://unstats.un.org/sdglab/).
 
