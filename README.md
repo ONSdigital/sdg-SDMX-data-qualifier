@@ -3,13 +3,14 @@
 
 Table of contents
 1. [What this script does](#about_script)
+
     1a. [Process Diagram](#process_diagram)
 2. [Code Mapping](#code_mapping)
 3. [Column Mapping](#column_mapping)
 4. [Why the process wasn't automated](#why-wasnt-the-process-automated)
 5. [Default Criteria for Selection](#default-criteria-for-selection)
 6. [Challenges Faced](#challenges-faced)
-7. [Next possible steps](#next-possible-steps)
+7. [Next Possible Development Steps](#next-possible-steps)
 8. [Instructions on how to use script](#how-to-install-and-run-the-script)
 9. [Glossary](#glossary)
 
@@ -84,7 +85,7 @@ Some of the datasets have geographical disagregations in the data, which is not 
 
 If any of these terms show up then a True will be placed in the geo_disag column. As specified in the suitability tests, only if geo_disag is False would the dataset be selected.
 
-## Next possible development steps
+## Next Possible Development Steps
 
 - Testing for each of the functions, which should include dataframe size/shape checking.
 - Streamline the logic of the suitability testing - e.g. the tests for the uk_only_data overlap with national_geographical_coverage.
@@ -93,11 +94,9 @@ If any of these terms show up then a True will be placed in the geo_disag column
 - Improve the `check_if_proxies_contain_official` as this is a useful Quality Assurance function to check if there were any contradictions between what is described as a proxie and what contains the . In the UK case there were a couple of contradictory indicators that were both listed as proxies but also contained the sentence in their descripton (8-1-1 and 6-2-1) and these were removed manually - perhaps this removal should be automatic.
 - Make a more generic version of `get_SDMX_colnm` as this is essentially a "VLookup" function (like in Excel) for dataframes. A VLookup function could be used in the disagregation name  --> SDMX concept matching, if that was ever to be made computer-assisted.
 
-## How to Install and run the script
+## How to Install and Run the Script
 
 The script was created and run using Python 3.9.2 and a conda environment. All the major dependencies are listed in the requirements.txt file.
-
-## Instructions on how to use script
 
 1) Clone the repo
 `git clone https://github.com/ONSdigital/sdg-SDMX-data-qualifier.git `
