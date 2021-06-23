@@ -3,9 +3,9 @@
 
 Table of contents
 1. [What this script does](#about_script)
-2. [Some paragraph](#paragraph1)
-    1. [Sub paragraph](#subparagraph1)
-3. [Another paragraph](#paragraph2)
+    1a. [Process Diagram](#process_diagram)
+2. [Code Mapping](#code_mapping)
+3. [Column Mapping](#column_mapping)
 
 # Process: What this script does <a name="about_script"></a>
 
@@ -13,7 +13,7 @@ This script selects suitable datasets from an Open data platform and manipulates
 
 The datasets are selected according to user-defined criteria, which are set in the config file. For example which geographical disaggregations the indicators to be selected cover can be specified for with the "uk_terms" parameter in the config file.
 
-## Process Diagram
+## Process Diagram <a name="process_diagram"></a>
 
 ![Overview of the process](https://github.com/ONSdigital/sdg-SDMX-data-qualifier/blob/c8ec7caa75251859e93ff05a68bd734ab2dbf341/images/Overview%20of%20the%20sdg-sdmx%20mapping%20process.jpg)
 
@@ -21,11 +21,11 @@ See the [technical process diagram](https://github.com/ONSdigital/sdg-SDMX-data-
 
 These process images were created using [Libre Office Draw](https://www.libreoffice.org/discover/draw/). The editable files are in the images/editable folder.
 
-## Code mapping
+## Code Mapping <a name="code_mapping"></a>
 
 The _disaggregation values_, in the SDG datasets are mapped to _SDMX code IDs_. For example Female within the Sex disaggregation would be mapped to the SDMX code “F”. This mapping is carried out via a semi-manual/computer-assisted process. The script looks for the best matches for the each of those values, and presents them to the user. The user has the final decision on which of the values is mapped to which SDMX value (its name in English). Then, based on the user choice of the SDMX value, the script then couples selects the SDMX code associated with that SDMX value and inserts it into the data table.
 
-## Column mapping
+## Column Mapping <a name="column_mapping"></a>
 
 Similiarly the _disaggregation names_, for example, Sex would be mapped to the SDMX concept SEX _SDMX concepts_. The script as it is currently leaves this step to be done entirely manually. Without a manually created csv in place (the name of which is specified in config file). Please see the "Possible next steps" section for further discussion on how this could be improved.
 
