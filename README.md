@@ -7,6 +7,11 @@ Table of contents
 2. [Code Mapping](#code_mapping)
 3. [Column Mapping](#column_mapping)
 4. [Why the process wasn't automated](#why-wasnt-the-process-automated)
+5. [Default Criteria for Selection](#default-criteria-for-selection)
+6. [Challenges Faced](#challenges-faced)
+7. [Next possible steps](#next-possible-steps)
+8. [Instructions on how to use script](#how-to-install-and-run-the-script)
+9. [Glossary](#glossary)
 
 # Process: What this script does <a name="about_script"></a>
 
@@ -61,7 +66,7 @@ These are configured using `suitability_test` in the config file.
 |--------------------------------|----------------------|
 
 
-## Challenges faced
+## Challenges Faced
 
 Under geographical coverage, we found two terms that were used in the UK SDG data that meant that observation covered the whole of the UK, they were as follows:
 
@@ -79,7 +84,7 @@ Some of the datasets have geographical disagregations in the data, which is not 
 
 If any of these terms show up then a True will be placed in the geo_disag column. As specified in the suitability tests, only if geo_disag is False would the dataset be selected.
 
-## Next possible steps
+## Next possible development steps
 
 - Testing for each of the functions, which should include dataframe size/shape checking.
 - Streamline the logic of the suitability testing - e.g. the tests for the uk_only_data overlap with national_geographical_coverage.
