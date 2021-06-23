@@ -6,6 +6,7 @@ Table of contents
     1a. [Process Diagram](#process_diagram)
 2. [Code Mapping](#code_mapping)
 3. [Column Mapping](#column_mapping)
+4. [Why the process wasn't automated](#why-wasnt-the-process-automated)
 
 # Process: What this script does <a name="about_script"></a>
 
